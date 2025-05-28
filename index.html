@@ -1,0 +1,204 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjetas de estudio. Capacitación del Personal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card {
+            perspective: 1000px;
+            height: 400px;
+            width: 600px;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        @media (max-width: 640px) {
+            .card {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-3xl font-bold text-blue-600 mb-6">Tarjetas de estudio. Capacitación del Personal</h1>
+    <div class="card" id="card">
+        <div class="card-inner">
+            <div class="card-front bg-blue-100 text-center">
+                <p class="text-xl font-semibold" id="question"></p>
+            </div>
+            <div class="card-back bg-green-100 text-center">
+                <p class="text-lg" id="answer"></p>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 flex space-x-4">
+        <button onclick="flipCard()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Mostrar Respuesta</button>
+        <button onclick="prevCard()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Anterior</button>
+        <button onclick="nextCard()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Siguiente</button>
+        <button onclick="shuffleCards()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Barajar</button>
+    </div>
+    <p class="mt-4 text-gray-600">Tarjeta <span id="card-index">1</span> de <span id="total-cards"></span></p>
+    <p class="mt-2 text-gray-500">Haz clic en la tarjeta o en "Mostrar Respuesta" para ver la respuesta.</p>
+    <footer class="mt-8 text-gray-600">
+        <p>Creado por <strong>Prof. Rodolfo Cabral</strong></p>
+    </footer>
+
+    <script>
+        const flashcards = [
+            {
+                question: "¿Qué es el aprendizaje colaborativo?",
+                answer: "<strong>Aprendizaje colaborativo</strong>: Actividad de pequeños grupos en el aula donde los estudiantes intercambian información y trabajan en una tarea hasta que todos la comprenden, aprendiendo mediante colaboración."
+            },
+            {
+                question: "¿Qué caracteriza al aprendizaje incidental?",
+                answer: "<strong>Aprendizaje incidental</strong>: Ausencia de intención del alumno de aprender. Ocurre de manera no planificada."
+            },
+            {
+                question: "¿Cómo se define el aprendizaje intencional?",
+                answer: "<strong>Aprendizaje intencional</strong>: Proceso donde el alumno tiene la intención de aprender. Surge de un propósito consciente."
+            },
+            {
+                question: "¿Qué es el aprendizaje significativo?",
+                answer: "<strong>Aprendizaje significativo</strong>: Interacción de nueva información con estructuras de conceptos previas, generando significado, asimilación y reestructuración del conocimiento."
+            },
+            {
+                question: "¿Qué significa aptitud en el contexto laboral?",
+                answer: "<strong>Aptitud</strong>: Capacidad para realizar satisfactoriamente una tarea o desempeñar un cargo."
+            },
+            {
+                question: "¿Qué es el autodesarrollo?",
+                answer: "<strong>Autodesarrollo</strong>: Proceso continuo y autodirigido para mejorar habilidades, conocimientos y competencias, fomentando crecimiento personal y profesional."
+            },
+            {
+                question: "¿Qué implica la autogestión del aprendizaje?",
+                answer: "<strong>Autogestión del aprendizaje</strong>: Capacidad del individuo para planificar, ejecutar y evaluar su propio proceso de aprendizaje."
+            },
+            {
+                question: "¿Qué es el benchmarking en capacitación?",
+                answer: "<strong>Benchmarking</strong>: Búsqueda de las mejores prácticas de la industria para mejorar programas de capacitación. Definido por Robert C. Camp."
+            },
+            {
+                question: "¿Quiénes son los beneficiarios de un proyecto?",
+                answer: "<strong>Beneficiarios</strong>: Personas directa o indirectamente favorecidas por los objetivos y metas de un proyecto."
+            },
+            {
+                question: "¿Qué es el bienestar laboral?",
+                answer: "<strong>Bienestar laboral</strong>: Estado de satisfacción y salud (física, mental, emocional) de los empleados en su entorno de trabajo."
+            }
+        ];
+
+        let currentCardIndex = 0;
+        let isFlipped = false;
+
+        function displayCard() {
+            const card = flashcards[currentCardIndex];
+            document.getElementById('question').innerHTML = card.question;
+            document.getElementById('answer').innerHTML = card.answer;
+            document.getElementById('card-index').textContent = currentCardIndex + 1;
+            document.getElementById('total-cards').textContent = flashcards.length;
+            if (!isFlipped) {
+                document.getElementById('card').classList.remove('flipped');
+            }
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            document.getElementById('card').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            isFlipped = false;
+            currentCardIndex = (currentCardIndex + 1) % flashcards.length;
+            displayCard();
+        }
+
+        function prevCard() {
+            isFlipped = false;
+            currentCardIndex = (currentCardIndex - 1 + flashcards.length) % flashcards.length;
+            displayCard();
+        }
+
+        function shuffleCards() {
+            for (let i = flashcards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+            }
+            currentCardIndex = 0;
+            isFlipped = false;
+            displayCard();
+        }
+
+        // Initialize the first card
+        displayCard();
+
+        // Add click event to card for flipping
+        document.getElementById('card').addEventListener('click', flipCard);
+    </script>
+</body>
+</html>
