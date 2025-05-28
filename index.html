@@ -45,44 +45,13 @@
     <title>Tarjetas de estudio. Capacitación del Personal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .card {
-            perspective: 1000px;
-            height: 400px;
-            width: 600px;
-            max-width: 90%;
-            margin: 0 auto;
-        }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background-color: #ffffff;
-        }
-        .card-back {
-            transform: rotateY(180deg);
-        }
-        @media (max-width: 640px) {
-            .card {
-                height: 300px;
-            }
-        }
+        .card { perspective: 1000px; height: 400px; width: 600px; max-width: 90%; margin: 0 auto; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); background-color: #ffffff; }
+        .card-back { transform: rotateY(180deg); }
+        .shuffle-button:hover { transform: scale(1.05); transition: transform 0.2s; }
+        @media (max-width: 640px) { .card { height: 300px; } }
     </style>
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
@@ -101,7 +70,7 @@
         <button onclick="flipCard()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Mostrar Respuesta</button>
         <button onclick="prevCard()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Anterior</button>
         <button onclick="nextCard()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Siguiente</button>
-        <button onclick="shuffleCards()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Barajar</button>
+        <button onclick="shuffleCards()" class="shuffle-button bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 border-2 border-orange-300 font-bold flex items-center">↬ Barajar</button>
     </div>
     <p class="mt-4 text-gray-600">Tarjeta <span id="card-index">1</span> de <span id="total-cards"></span></p>
     <p class="mt-2 text-gray-500">Haz clic en la tarjeta o en "Mostrar Respuesta" para ver la respuesta.</p>
@@ -150,6 +119,554 @@
             {
                 question: "¿Qué es el bienestar laboral?",
                 answer: "<strong>Bienestar laboral</strong>: Estado de satisfacción y salud (física, mental, emocional) de los empleados en su entorno de trabajo."
+            },
+            {
+                question: "¿Qué es el brainstorming como técnica didáctica?",
+                answer: "<strong>Brainstorming</strong>: Técnica donde un grupo pequeño expone libremente ideas sobre un tema o problema para generar soluciones originales."
+            },
+            {
+                question: "¿Qué significa blended learning?",
+                answer: "<strong>Blended learning</strong>: Combinación estructurada de formación presencial y online para crear experiencias de aprendizaje completas, flexibles y personalizadas."
+            },
+            {
+                question: "¿Cómo se define la capacitación?",
+                answer: "<strong>Capacitación</strong>: Proceso de enseñanza y aprendizaje dirigido a un público específico, enfocado en temáticas particulares según sus necesidades."
+            },
+            {
+                question: "¿Qué es la capacitación cruzada?",
+                answer: "<strong>Capacitación cruzada</strong>: Intercambio de puestos de trabajo entre empleados para desarrollar habilidades en roles no relacionados con el suyo."
+            },
+            {
+                question: "¿Qué caracteriza a la capacitación laboral?",
+                answer: "<strong>Capacitación laboral</strong>: Proceso educativo/formativo en el ámbito laboral, puede ser formal, no formal o informal, enfocado en aspectos técnicos, organizacionales o estratégicos."
+            },
+            {
+                question: "¿Qué es la capacitación por inducción?",
+                answer: "<strong>Capacitación por inducción</strong>: Orientada a trabajadores nuevos, proporcionando información básica sobre la organización y su rol laboral."
+            },
+            {
+                question: "¿Quién es el capacitador?",
+                answer: "<strong>Capacitador</strong>: Persona encargada de desempeñar el rol docente en un curso de capacitación laboral."
+            },
+            {
+                question: "¿Qué es el capital humano según Gary S. Becker?",
+                answer: "<strong>Capital humano</strong>: Acumulación de inversiones en personas (educación, capacitación, salud, experiencia) que mejora productividad y ganancias."
+            },
+            {
+                question: "¿Qué implica la certificación de competencias?",
+                answer: "<strong>Certificación de competencias</strong>: Verificación y acreditación formal de habilidades, conocimientos y atributos para una función laboral, según estándares preestablecidos."
+            },
+            {
+                question: "¿Cómo se define el clima organizacional?",
+                answer: "<strong>Clima organizacional</strong>: Percepción de los miembros sobre su entorno laboral, influyendo en su motivación y comportamiento."
+            },
+            {
+                question: "¿Qué es la clínica del rumor?",
+                answer: "<strong>Clínica del rumor</strong>: Técnica didáctica que demuestra cómo se crean rumores y se distorsiona la realidad mediante testimonios sucesivos."
+            },
+            {
+                question: "¿Qué significa coaching en capacitación?",
+                answer: "<strong>Coaching</strong>: Función del supervisor para ayudar a evaluar tareas, detectar errores, analizar consecuencias y explorar alternativas de acción."
+            },
+            {
+                question: "¿Qué es la coherencia interna en proyectos?",
+                answer: "<strong>Coherencia interna</strong>: Combinación armónica de elementos de un proyecto de capacitación (objetivos, contenidos, actividades, recursos) que adquieren sentido en el conjunto."
+            },
+            {
+                question: "¿Qué implica la coherencia externa en proyectos?",
+                answer: "<strong>Coherencia externa</strong>: Relación del proyecto con la demanda que responde y con otros programas de capacitación."
+            },
+            {
+                question: "¿Qué es una cohorte en el contexto educativo?",
+                answer: "<strong>Cohorte</strong>: Grupo de individuos que comienzan y avanzan juntos en un programa de formación."
+            },
+            {
+                question: "¿Qué son las competencias blandas?",
+                answer: "<strong>Competencias blandas</strong>: Habilidades interpersonales y características personales que facilitan la interacción efectiva y el éxito laboral."
+            },
+            {
+                question: "¿Qué son las competencias duras?",
+                answer: "<strong>Competencias duras</strong>: Habilidades técnicas y conocimientos específicos, certificables, necesarios para una tarea laboral."
+            },
+            {
+                question: "¿Qué caracteriza a las competencias profesionales?",
+                answer: "<strong>Competencias profesionales</strong>: Combinación de conocimientos, habilidades, valores motivadores y creencias que permiten un desempeño innovador."
+            },
+            {
+                question: "¿Cómo se define la conducta?",
+                answer: "<strong>Conducta</strong>: Conjunto de acciones observables y descriptibles."
+            },
+            {
+                question: "¿Qué es la confiabilidad en instrumentos de evaluación?",
+                answer: "<strong>Confiabilidad</strong>: Estabilidad y calidad de un instrumento de evaluación para arrojar resultados similares en grupos homogéneos."
+            },
+            {
+                question: "¿Qué son los contenidos en un proyecto de capacitación?",
+                answer: "<strong>Contenidos</strong>: Temas a enseñar o considerar durante un programa de capacitación."
+            },
+            {
+                question: "¿Qué implica la coordinación en un equipo?",
+                answer: "<strong>Coordinación</strong>: Sincronización y unificación de acciones de un grupo hacia un objetivo común."
+            },
+            {
+                question: "¿Qué es la cualificación laboral?",
+                answer: "<strong>Cualificación</strong>: Nivel de formación necesario para una ocupación laboral."
+            },
+            {
+                question: "¿Qué es la cultura organizacional?",
+                answer: "<strong>Cultura organizacional</strong>: Patrón de supuestos básicos que un grupo desarrolla para responder a demandas externas manteniendo coherencia interna."
+            },
+            {
+                question: "¿Qué representa la curva de aprendizaje?",
+                answer: "<strong>Curva de aprendizaje</strong>: Representación gráfica del progreso en la adquisición de conocimientos o habilidades con el tiempo o la práctica."
+            },
+            {
+                question: "¿Qué es el debate dirigido como técnica didáctica?",
+                answer: "<strong>Debate dirigido</strong>: Discusión informal de un grupo reducido sobre un tema, guiada por un conductor."
+            },
+            {
+                question: "¿Qué es el diagnóstico en capacitación?",
+                answer: "<strong>Diagnóstico</strong>: Examen de una situación para identificar y solucionar problemas."
+            },
+            {
+                question: "¿Qué es el diagnóstico de necesidades de capacitación (DNC)?",
+                answer: "<strong>Diagnóstico de necesidades de capacitación (DNC)</strong>: Proceso sistemático para identificar brechas entre el desempeño actual y deseado, determinando necesidades de formación."
+            },
+            {
+                question: "¿Qué son los diálogos simultáneos?",
+                answer: "<strong>Diálogos simultáneos</strong>: Técnica didáctica donde los miembros de un grupo dialogan de a dos sobre temas relevantes."
+            },
+            {
+                question: "¿Qué implica el diseño en proyectos de capacitación?",
+                answer: "<strong>Diseño</strong>: Planificación de la actividad de capacitación, combinando armónicamente elementos internos a partir de una idea global."
+            },
+            {
+                question: "¿Cómo se define la educación?",
+                answer: "<strong>Educación</strong>: Proceso interior de formación del hombre mediante acción consciente y estímulo sociocultural."
+            },
+            {
+                question: "¿Qué es la educación de adultos según la UNESCO?",
+                answer: "<strong>Educación de adultos</strong>: Procesos organizados de educación, formales o no formales, para desarrollar aptitudes, conocimientos y competencias en adultos."
+            },
+            {
+                question: "¿Qué es la educación formal según Coombs?",
+                answer: "<strong>Educación formal</strong>: Sistema educativo institucionalizado, cronológicamente graduado y jerárquicamente estructurado, desde la escuela inicial hasta la universidad."
+            },
+            {
+                question: "¿Qué caracteriza a la educación informal?",
+                answer: "<strong>Educación informal</strong>: Conocimientos adquiridos libre y espontáneamente de diversas fuentes no estructuradas."
+            },
+            {
+                question: "¿Qué es la educación no formal según Coombs?",
+                answer: "<strong>Educación no formal</strong>: Actividad educacional sistemática fuera del sistema formal, dirigida a subgrupos específicos."
+            },
+            {
+                question: "¿Qué implica la educación permanente?",
+                answer: "<strong>Educación permanente</strong>: Enfoque que integra la educación a lo largo de la vida, considerando necesidades sociales, económicas y familiares."
+            },
+            {
+                question: "¿Qué es la eficacia de la capacitación?",
+                answer: "<strong>Eficacia de la capacitación</strong>: Grado en que un programa logra sus objetivos, evaluado por el aprendizaje y su aplicación en el trabajo."
+            },
+            {
+                question: "¿Qué es la eficiencia de la capacitación?",
+                answer: "<strong>Eficiencia de la capacitación</strong>: Relación entre resultados obtenidos y recursos invertidos (tiempo, dinero, personal)."
+            },
+            {
+                question: "¿Qué es el e-learning?",
+                answer: "<strong>e-Learning</strong>: Proceso de enseñanza y aprendizaje a través de redes de comunicación electrónicas (internet o intranet)."
+            },
+            {
+                question: "¿Qué es el e-learning sincrónico?",
+                answer: "<strong>e-Learning sincrónico</strong>: Modalidad en línea donde participantes e instructor interactúan en tiempo real mediante herramientas virtuales."
+            },
+            {
+                question: "¿Qué significa empowerment en una organización?",
+                answer: "<strong>Empowerment</strong>: Estilo organizativo que permite a los equipos cambiar el saber organizativo."
+            },
+            {
+                question: "¿Para qué sirven las encuestas en capacitación?",
+                answer: "<strong>Encuestas</strong>: Herramientas para recolectar datos que se transforman en información para la toma de decisiones."
+            },
+            {
+                question: "¿Qué es un enfoque en un proyecto?",
+                answer: "<strong>Enfoque</strong>: Dirección o procedimiento adoptado para valorar y tratar problemas relacionados con un proyecto."
+            },
+            {
+                question: "¿Cómo se define la enseñanza?",
+                answer: "<strong>Enseñanza</strong>: Actividad intencional diseñada por el docente para facilitar el aprendizaje en un contexto institucional."
+            },
+            {
+                question: "¿Qué es un entorno virtual de aprendizaje (EVA)?",
+                answer: "<strong>Entorno virtual de aprendizaje (EVA)</strong>: Espacio digital para gestionar contenidos educativos, actividades de aprendizaje y comunicación entre docentes y estudiantes."
+            },
+            {
+                question: "¿Qué son las entrevistas como método de investigación?",
+                answer: "<strong>Entrevistas</strong>: Método para obtener datos y opiniones mediante preguntas formuladas a una persona."
+            },
+            {
+                question: "¿Qué es una entrevista colectiva?",
+                answer: "<strong>Entrevista colectiva</strong>: Técnica didáctica donde un equipo interroga a un experto sobre un tema de interés ante un auditorio."
+            },
+            {
+                question: "¿Qué caracteriza a un equipo?",
+                answer: "<strong>Equipo</strong>: Conjunto de personas con alta interdependencia, especialización y madurez en su interrelación, orientadas a un propósito compartido."
+            },
+            {
+                question: "¿Qué es una estrategia en capacitación?",
+                answer: "<strong>Estrategia</strong>: Guía de acción que coordina actividades hacia un objetivo específico."
+            },
+            {
+                question: "¿Qué es una estrategia didáctica?",
+                answer: "<strong>Estrategia didáctica</strong>: Planificación del proceso de enseñanza-aprendizaje con decisiones conscientes sobre técnicas y actividades para alcanzar objetivos."
+            },
+            {
+                question: "¿Qué es la estructura cognitiva?",
+                answer: "<strong>Estructura cognitiva</strong>: Forma en que un individuo organiza su visión del mundo y la realidad mediante experiencias y aprendizajes."
+            },
+            {
+                question: "¿Qué es la estructura organizacional?",
+                answer: "<strong>Estructura organizacional</strong>: Disposición de recursos de una empresa para cumplir funciones y alcanzar objetivos."
+            },
+            {
+                question: "¿Qué es el estudio de casos como técnica didáctica?",
+                answer: "<strong>Estudio de casos</strong>: Análisis exhaustivo de un caso para extraer conclusiones basadas en intereses y experiencias del grupo."
+            },
+            {
+                question: "¿Qué es la evaluación en capacitación?",
+                answer: "<strong>Evaluación</strong>: Proceso de obtención de información para formular juicios y tomar decisiones."
+            },
+            {
+                question: "¿Qué es la evaluación de aprendizaje?",
+                answer: "<strong>Evaluación de aprendizaje</strong>: Informa sobre conocimientos o actitudes adquiridos durante la capacitación."
+            },
+            {
+                question: "¿Qué es la evaluación de proceso?",
+                answer: "<strong>Evaluación de proceso</strong>: Realizada durante el proceso de enseñanza-aprendizaje para reajustar elementos del programa."
+            },
+            {
+                question: "¿Qué es la evaluación de producto o final?",
+                answer: "<strong>Evaluación de producto o final</strong>: Califica a un individuo o grupo para comprobar la eficacia de la enseñanza."
+            },
+            {
+                question: "¿Qué es la evaluación de reacción?",
+                answer: "<strong>Evaluación de reacción</strong>: Conoce el juicio de los participantes sobre el programa o proyecto."
+            },
+            {
+                question: "¿Qué es la evaluación de resultados?",
+                answer: "<strong>Evaluación de resultados</strong>: Detecta la contribución del programa a los objetivos de la empresa."
+            },
+            {
+                question: "¿Qué es la evaluación de utilización?",
+                answer: "<strong>Evaluación de utilización</strong>: Establece si los efectos de la capacitación se aplican en la práctica laboral."
+            },
+            {
+                question: "¿Qué es la evaluación del desempeño?",
+                answer: "<strong>Evaluación del desempeño</strong>: Evaluación del comportamiento del sujeto en una situación laboral concreta."
+            },
+            {
+                question: "¿Qué es la evaluación inicial o diagnóstica?",
+                answer: "<strong>Evaluación inicial o diagnóstica</strong>: Detecta habilidades y conocimientos previos al inicio del proceso de enseñanza-aprendizaje."
+            },
+            {
+                question: "¿Qué es la evaluación 360 grados?",
+                answer: "<strong>Evaluación 360 grados</strong>: Proceso de retroalimentación donde un empleado recibe aportes de supervisores, pares, subordinados y clientes."
+            },
+            {
+                question: "¿Qué es la experiencia del empleado?",
+                answer: "<strong>Experiencia del empleado</strong>: Suma de todas las interacciones de un empleado con la organización, desde el reclutamiento hasta su salida."
+            },
+            {
+                question: "¿Qué es la exposición como técnica didáctica?",
+                answer: "<strong>Exposición</strong>: Presentación estructurada de un tema, principalmente mediante lenguaje oral o escrito."
+            },
+            {
+                question: "¿Qué es la flexibilidad curricular?",
+                answer: "<strong>Flexibilidad curricular</strong>: Capacidad de un programa de capacitación para adaptarse a necesidades individuales, cambios laborales o demandas del mercado."
+            },
+            {
+                question: "¿Qué es la finalidad en un proyecto?",
+                answer: "<strong>Finalidad</strong>: Impacto a largo plazo que se busca lograr con un proyecto."
+            },
+            {
+                question: "¿Qué es el foro como técnica didáctica?",
+                answer: "<strong>Foro</strong>: Discusión informal de un grupo sobre un tema, conducida por un coordinador."
+            },
+            {
+                question: "¿Qué es la fundamentación o justificación en proyectos?",
+                answer: "<strong>Fundamentación o justificación</strong>: Criterios y razones que justifican la realización de un proyecto."
+            },
+            {
+                question: "¿Qué es la formación?",
+                answer: "<strong>Formación</strong>: Estudios y aprendizajes orientados a la inserción, reinserción y actualización laboral."
+            },
+            {
+                question: "¿Qué es la gamificación en capacitación?",
+                answer: "<strong>Gamificación</strong>: Aplicación de elementos de juegos en contextos no lúdicos para aumentar motivación, compromiso y aprendizaje."
+            },
+            {
+                question: "¿Qué es la gestión del conocimiento?",
+                answer: "<strong>Gestión del conocimiento</strong>: Proceso sistemático de crear, organizar, compartir y aplicar conocimiento para mejorar el desempeño organizacional."
+            },
+            {
+                question: "¿Qué es la gestión del talento?",
+                answer: "<strong>Gestión del talento</strong>: Proceso estratégico para atraer, desarrollar, motivar y retener empleados valiosos."
+            },
+            {
+                question: "¿Qué es un grupo en el contexto organizacional?",
+                answer: "<strong>Grupo</strong>: Conjunto de personas que interactúan con una historia o propósito compartido."
+            },
+            {
+                question: "¿Qué es una habilidad?",
+                answer: "<strong>Habilidad</strong>: Capacidad para realizar una tarea con destreza y facilidad."
+            },
+            {
+                question: "¿Qué es la hipótesis del injerto?",
+                answer: "<strong>Hipótesis del injerto</strong>: Capacitación vista como un cuerpo extraño en la organización, generando resistencias."
+            },
+            {
+                question: "¿Qué son los incentivos en capacitación?",
+                answer: "<strong>Incentivos</strong>: Recompensas o estímulos para motivar a los empleados a participar y aplicar lo aprendido."
+            },
+            {
+                question: "¿Qué es un indicador en proyectos?",
+                answer: "<strong>Indicador</strong>: Dato estadístico que mide cuánto se ha avanzado en una actividad hacia las metas establecidas."
+            },
+            {
+                question: "¿Qué son los indicadores de evaluación?",
+                answer: "<strong>Indicadores de evaluación</strong>: Signos que miden grados y variaciones de una actividad respecto a metas."
+            },
+            {
+                question: "¿Qué es la ingeniería de la capacitación?",
+                answer: "<strong>Ingeniería de la capacitación</strong>: Metodología para anticipar aspectos contextuales y pedagógicos, ajustando la capacitación a la demanda."
+            },
+            {
+                question: "¿Qué es la inteligencia emocional según Goleman?",
+                answer: "<strong>Inteligencia emocional</strong>: Capacidad de reconocer, entender y gestionar emociones propias y ajenas para guiar el pensamiento y la acción."
+            },
+            {
+                question: "¿Qué es la inversión en capacitación?",
+                answer: "<strong>Inversión en capacitación</strong>: Asignación de recursos para desarrollar habilidades y conocimientos, buscando mejorar el desempeño y la competitividad."
+            },
+            {
+                question: "¿Qué es el job rotation?",
+                answer: "<strong>Job rotation</strong>: Práctica de mover a los empleados entre diferentes puestos para ampliar habilidades y perspectivas."
+            },
+            {
+                question: "¿Qué es el just-in-time training?",
+                answer: "<strong>Just-in-time training</strong>: Capacitación entregada en el momento exacto en que el empleado la necesita para una tarea específica."
+            },
+            {
+                question: "¿Qué es el macrodiseño didáctico?",
+                answer: "<strong>Macrodiseño didáctico</strong>: Definición global de la metodología de enseñanza, asignación de recursos, tiempos, selección de alumnos e instructores, y criterios de evaluación."
+            },
+            {
+                question: "¿Qué es el mentoring?",
+                answer: "<strong>Mentoring</strong>: Relación en la que un mentor protege a un aprendiz para guiar el desarrollo de habilidades, conocimientos y perspectivas."
+            },
+            {
+                question: "¿Qué es la mesa redonda como técnica didáctica?",
+                answer: "<strong>Mesa redonda</strong>: Equipo de especialistas con puntos de vista divergentes exponen sucesivamente sobre un tema ante un grupo."
+            },
+            {
+                question: "¿Qué son las metas claras en un proyecto?",
+                answer: "<strong>Metas claras</strong>: Logros específicos que operacionalizan los objetivos, definiendo cómo y cuándo se alcanzarán."
+            },
+            {
+                question: "¿Qué es un método en capacitación?",
+                answer: "<strong>Método</strong>: Procedimientos ordenados para realizar la adquisición de conocimientos o la investigación."
+            },
+            {
+                question: "¿Qué son las modalidades de acción en capacitación?",
+                answer: "<strong>Modalidades de aprendizaje</strong>: Formas de ofrecer un programa de formación (presencial, virtual, blended learning, en el puesto de trabajo)."
+            },
+            {
+                question: "¿Qué es la motivación intrínseca?",
+                answer: "<strong>Motivación intrínseca</strong>: Tendencia a buscar desafíos y aprender por interés propio, sin necesidad de recompensas externas."
+            },
+            {
+                question: "¿Qué es una organización?",
+                answer: "<strong>Organización</strong>: Sistema socio-técnico abierto que intercambia energía, materia, información y recursos con su entorno."
+            },
+            {
+                question: "¿Qué es el panel como técnica didáctica?",
+                answer: "<strong>Panel</strong>: Discusión dialogada de un equipo de expertos sobre un tema educativo ante un grupo."
+            },
+            {
+                question: "¿Qué es la pedagogía?",
+                answer: "<strong>Pedagogía</strong>: Ciencia y arte de la educación y la enseñanza, enfocada en métodos y principios para guiar el aprendizaje."
+            },
+            {
+                question: "¿Qué es el pequeño grupo pequeño de discusión?",
+                answer: "<strong>Pequeño grupo pequeño de discusión</strong>: Grupo reducido que trata temas en una discusión libre e informal, guiado por un coordinador."
+            },
+            {
+                question: "¿Qué es la técnica Phillips 66?",
+                answer: "<strong>Phillips 66</strong>: Técnica donde un grupo grande se divide en subgrupos de seis personas para discutir un tema durante seis minutos y llegar a conclusiones."
+            },
+            {
+                question: "¿Qué es un plan en capacitación?",
+                answer: "<strong>Plan</strong>: Decisiones generales que establecen directrices, prioridades, recursos y estrategias para alcanzar objetivos."
+            },
+            {
+                question: "¿Qué significa planificar?",
+                answer: "<strong>Planificar</strong>: Instrumentar decisiones mediante recursos humanos y no humanos para obtener resultados esperados."
+            },
+            {
+                question: "¿Qué es el potencial en el contexto laboral?",
+                answer: "<strong>Potencial</strong>: Capacidad para generar impacto positivo en uno mismo, la sociedad y el entorno."
+            },
+            {
+                question: "¿Qué es una conducta proactiva?",
+                answer: "<strong>Conducta proactiva</strong>: Capacidad de promover situaciones positivas mediante la anticipación a conductas reactivas."
+            },
+            {
+                question: "¿Cuál es la diferencia entre proceso y procedimiento?",
+                answer: "<strong>Proceso</strong>: Serie de actos que forman parte de un todo. <strong>Procedimiento</strong>: Método o esquema para realizar una tarea."
+            },
+            {
+                question: "¿Qué es la productividad?",
+                answer: "<strong>Productividad</strong>: Relación entre bienes/servicios producidos y recursos utilizados."
+            },
+            {
+                question: "¿Qué es un programa en capacitación?",
+                answer: "<strong>Programa</strong>: Conjunto organizado de actividades, servicios o procesos relacionados, coordinados entre sí."
+            },
+            {
+                question: "¿Qué es un proyecto?",
+                answer: "<strong>Proyecto</strong>: Conjunto de actividades interrelacionadas para producir bienes/servicios que resuelvan necesidades o problemas."
+            },
+            {
+                question: "¿Qué es un proyecto educativo?",
+                answer: "<strong>Proyecto educativo</strong>: Conjunto de operaciones para modificar una situación educativa inicial, mejorando condiciones sociales y educativas."
+            },
+            {
+                question: "¿Qué es la racionalidad en proyectos?",
+                answer: "<strong>Racionalidad</strong>: Conocimiento completo de factores, ordenamiento de prioridades y selección de alternativas para maximizar la utilidad."
+            },
+            {
+                question: "¿Qué es la racionalidad organizativa?",
+                answer: "<strong>Racionalidad organizativa</strong>: Modo de entender la organización, ajustándola a demandas internas y externas mediante la discusión de perspectivas."
+            },
+            {
+                question: "¿Qué es el reconocimiento en el ámbito laboral?",
+                answer: "<strong>Reconocimiento</strong>: Valoración formal o informal de las contribuciones, desempeño o logros de un individuo o equipo."
+            },
+            {
+                question: "¿Qué es una red de programa?",
+                answer: "<strong>Red de programa</strong>: Sujetos que comparten una percepción común de un problema y ven un proyecto de capacitación como solución."
+            },
+            {
+                question: "¿Qué es el reentrenamiento?",
+                answer: "<strong>Reentrenamiento</strong>: Capacitación en nuevas habilidades debido a cambios en puestos, tecnología o demandas del mercado."
+            },
+            {
+                question: "¿Qué es la resiliencia en el contexto organizacional?",
+                answer: "<strong>Resiliencia</strong>: Capacidad de adaptarse y recuperarse positivamente ante adversidades, estrés o cambios."
+            },
+            {
+                question: "¿Qué es el ROI en capacitación?",
+                answer: "<strong>ROI (Retorno de la Inversión)</strong>: Métrica que compara los beneficios monetarios de un programa de capacitación con sus costos."
+            },
+            {
+                question: "¿Qué es el rol docente?",
+                answer: "<strong>Rol docente</strong>: Conjunto de actividades conductuales/actitudinales del docente para planificar, coordinar, evaluar y reformular la enseñanza."
+            },
+            {
+                question: "¿Qué es el role-playing como técnica didáctica?",
+                answer: "<strong>Role-playing</strong>: Representación de una situación real donde los participantes asumen roles para comprenderla y tratarla."
+            },
+            {
+                question: "¿Qué son las rotaciones en el trabajo?",
+                answer: "<strong>Rotaciones</strong>: Práctica de mover a una persona entre diferentes puestos para obtener una visión global del trabajo."
+            },
+            {
+                question: "¿Qué son los saberes socialmente productivos?",
+                answer: "<strong>Saberes socialmente productivos</strong>: Conocimientos que transforman a los sujetos, la naturaleza y la cultura, generando nuevos sentidos."
+            },
+            {
+                question: "¿Qué es la satisfacción laboral según Locke?",
+                answer: "<strong>Satisfacción laboral</strong>: Estado emocional positivo derivado de la evaluación de experiencias laborales."
+            },
+            {
+                question: "¿Qué es una secuencia didáctica?",
+                answer: "<strong>Secuencia didáctica</strong>: Conjunto ordenado de actividades para alcanzar objetivos educativos, con principio y fin definidos."
+            },
+            {
+                question: "¿Qué es un seminario como técnica didáctica?",
+                answer: "<strong>Seminario</strong>: Grupo reducido que investiga un tema en sesiones planificadas con fuentes originales."
+            },
+            {
+                question: "¿Qué es un simposio?",
+                answer: "<strong>Simposio</strong>: Equipo de especialistas que desarrolla diferentes aspectos de un tema sucesivamente, sumando información."
+            },
+            {
+                question: "¿Qué es la sinergia en proyectos?",
+                answer: "<strong>Sinergia</strong>: Potenciación de un proyecto mediante la coordinación de acciones que refuerzan mutuamente sus efectos."
+            },
+            {
+                question: "¿Qué es la socialización según German Rey?",
+                answer: "<strong>Socialización</strong>: Proceso relacional que conforma al ser humano mediante la interiorización de normas, valores y creencias."
+            },
+            {
+                question: "¿Qué es el storytelling en capacitación?",
+                answer: "<strong>Storytelling</strong>: Uso de narrativas o casos reales para ilustrar conceptos, emocionar y facilitar la retención del aprendizaje."
+            },
+            {
+                question: "¿Qué es un taller como estrategia didáctica?",
+                answer: "<strong>Taller</strong>: Estrategia donde los participantes aprenden haciendo, reflexionando y elaborando productos en un proceso grupal."
+            },
+            {
+                question: "¿Qué es una tarea en un proyecto?",
+                answer: "<strong>Tarea</strong>: Acción específica que operacionaliza una actividad dentro de un proyecto."
+            },
+            {
+                question: "¿Qué es una técnica didáctica?",
+                answer: "<strong>Técnica didáctica</strong>: Procedimiento lógico para orientar el aprendizaje en un sector específico del curso."
+            },
+            {
+                question: "¿Qué es la técnica del riesgo?",
+                answer: "<strong>Técnica del riesgo</strong>: Grupo expresa y discute riesgos potenciales de una nueva situación."
+            },
+            {
+                question: "¿Qué son las técnicas de recolección de datos?",
+                answer: "<strong>Técnicas de recolección de datos</strong>: Herramientas (tests, entrevistas, encuestas, observaciones) para recopilar información sobre una situación."
+            },
+            {
+                question: "¿Qué son las tecnologías de la información y comunicación (TICs)?",
+                answer: "<strong>Tecnologías de la información y comunicación (TICs)</strong>: Herramientas tecnológicas para crear, procesar, almacenar y difundir información."
+            },
+            {
+                question: "¿Qué es la transferencia del aprendizaje?",
+                answer: "<strong>Transferencia del aprendizaje</strong>: Grado en que conocimientos, habilidades y actitudes adquiridos se aplican en el trabajo."
+            },
+            {
+                question: "¿Qué es la tutoría?",
+                answer: "<strong>Tutoría</strong>: Relación de apoyo individualizada donde un tutor guía al aprendiz en su desarrollo."
+            },
+            {
+                question: "¿Qué es el universo educativo?",
+                answer: "<strong>Universo educativo</strong>: Conjunto de experiencias educativas abarcadas por la educación formal, no formal e informal."
+            },
+            {
+                question: "¿Qué es la validez en instrumentos de evaluación?",
+                answer: "<strong>Validez</strong>: Propiedad de los indicadores para medir lo que pretenden, sin desviaciones."
+            },
+            {
+                question: "¿Qué son los valores organizacionales?",
+                answer: "<strong>Valores organizacionales</strong>: Principios y creencias compartidas que guían el comportamiento y las decisiones en una organización."
+            },
+            {
+                question: "¿Qué es la verificabilidad en proyectos?",
+                answer: "<strong>Verificabilidad</strong>: Propiedad de los indicadores para comprobar empíricamente los cambios producidos por un proyecto."
+            },
+            {
+                question: "¿Qué es un webinar?",
+                answer: "<strong>Webinar</strong>: Conferencia o taller transmitido en vivo por internet, con interacción en tiempo real."
+            },
+            {
+                question: "¿Qué es un workshop?",
+                answer: "<strong>Workshop</strong>: Sesión intensiva y práctica para adquirir conocimientos y habilidades mediante colaboración."
             }
         ];
 
@@ -194,10 +711,7 @@
             displayCard();
         }
 
-        // Initialize the first card
         displayCard();
-
-        // Add click event to card for flipping
         document.getElementById('card').addEventListener('click', flipCard);
     </script>
 </body>
