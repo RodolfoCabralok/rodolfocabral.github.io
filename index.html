@@ -29,6 +29,32 @@
             width: 90%;
         }
         h1 { color: #3a5d7d; font-size: 24px; margin-bottom: 10px; }
+        .glossary-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+            position: relative;
+        }
+        .glossary-link:hover::after {
+            content: "Consultar Glosario";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3a5d7d;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
         .card { background: #fff; color: #333; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); margin-bottom: 20px; opacity: 0; animation: fadeIn 0.5s forwards; position: relative; }
         .card::before { content: '🛠️'; position: absolute; top: -10px; left: -10px; font-size: 24px; }
         @keyframes fadeIn { to { opacity: 1; } }
@@ -56,6 +82,7 @@
 <body>
     <div class="container">
         <h1>🏭 Fábrica de Conocimiento: Capacitación del Personal</h1>
+        <a href="https://drive.google.com/file/d/1BJ_ujQ1w3VTMbe_v4APPoY1RWxzeKrkY/view?usp=sharing" target="_blank" class="glossary-link" title="Consultar Glosario">📖</a>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
@@ -80,33 +107,27 @@
     </div>
     <script>
         const flashcards = [
-            { question: "¿Qué es el aprendizaje colaborativo?", answer: "El aprendizaje colaborativo es un proceso donde los estudiantes trabajan juntos para resolver problemas y aprender mutuamente.", options: [
-                { text: "El aprendizaje colaborativo es un proceso donde los estudiantes trabajan juntos para resolver problemas y aprender mutuamente.", correct: true },
-                { text: "El aprendizaje colaborativo es estudiar solo en silencio.", correct: false },
-                { text: "El aprendizaje colaborativo es competir individualmente por notas.", correct: false }
+            { question: "¿Qué es el aprendizaje colaborativo?", answer: "Es trabajar en equipo para aprender juntos.", options: [
+                { text: "Estudiar solo en casa sin ayuda.", correct: false },
+                { text: "Es trabajar en equipo para aprender juntos.", correct: true },
+                { text: "Competir contra otros para obtener mejores notas.", correct: false }
             ] },
-            { question: "¿Qué son las competencias laborales?", answer: "Las competencias laborales son habilidades como comunicación, trabajo en equipo y resolución de problemas necesarias para el desempeño laboral.", options: [
-                { text: "Las competencias laborales son habilidades como comunicación, trabajo en equipo y resolución de problemas necesarias para el desempeño laboral.", correct: true },
-                { text: "Las competencias laborales son solo conocimientos teóricos.", correct: false },
-                { text: "Las competencias laborales son habilidades físicas como correr.", correct: false }
+            { question: "¿Qué son las competencias laborales?", answer: "Habilidades necesarias para el trabajo.", options: [
+                { text: "Conocimientos teóricos sin práctica.", correct: false },
+                { text: "Habilidades físicas para deportes.", correct: false },
+                { text: "Habilidades necesarias para el trabajo.", correct: true }
             ] },
-            { question: "¿Qué son las técnicas didácticas?", answer: "Las técnicas didácticas son métodos que facilitan la enseñanza y el aprendizaje de manera efectiva.", options: [
-                { text: "Las técnicas didácticas son métodos que facilitan la enseñanza y el aprendizaje de manera efectiva.", correct: true },
-                { text: "Las técnicas didácticas son solo lecturas largas.", correct: false },
-                { text: "Las técnicas didácticas son juegos sin propósito educativo.", correct: false }
+            { question: "¿Qué son las técnicas didácticas?", answer: "Métodos para facilitar el aprendizaje.", options: [
+                { text: "Métodos para facilitar el aprendizaje.", correct: true },
+                { text: "Estrategias para memorizar sin entender.", correct: false },
+                { text: "Juegos sin propósito educativo.", correct: false }
             ] },
-            // ... (continúa con 144 tarjetas más, ejemplo abreviado por longitud)
-            { question: "¿Qué es la empatía en el aprendizaje?", answer: "La empatía en el aprendizaje es la capacidad de entender y compartir los sentimientos de otros para mejorar la colaboración.", options: [
-                { text: "La empatía en el aprendizaje es la capacidad de entender y compartir los sentimientos de otros para mejorar la colaboración.", correct: true },
-                { text: "La empatía en el aprendizaje es ignorar a los demás.", correct: false },
-                { text: "La empatía en el aprendizaje es competir emocionalmente.", correct: false }
-            ] },
-            { question: "¿Qué es la resolución de problemas?", answer: "La resolución de problemas es el proceso de identificar, analizar y solucionar un desafío de manera efectiva.", options: [
-                { text: "La resolución de problemas es el proceso de identificar, analizar y solucionar un desafío de manera efectiva.", correct: true },
-                { text: "La resolución de problemas es evitar los desafíos.", correct: false },
-                { text: "La resolución de problemas es solo pensar sin actuar.", correct: false }
-            ] },
-            // Repetir este patrón para las 147 tarjetas totales (aquí solo 5 como ejemplo, completa manualmente o pedime más)
+            // ... (las otras 144 tarjetas con opciones, abreviadas aquí por longitud)
+            { question: "¿Qué es la gestión de la seguridad laboral?", answer: "Prevenir accidentes en el trabajo.", options: [
+                { text: "Prevenir accidentes en el trabajo.", correct: true },
+                { text: "Ignorar la seguridad del equipo.", correct: false },
+                { text: "Evitar prevenir accidentes.", correct: false }
+            ] }
         ];
 
         let currentCardIndex = 0;
@@ -119,7 +140,7 @@
         let startTime;
         let playerName = '';
         let opponentTrophies = 0;
-        let maxCards = 10; // Para Duelo
+        let maxCards = 10;
 
         const questionElement = document.getElementById('question');
         const optionsElement = document.getElementById('options');
@@ -138,28 +159,36 @@
         const successSound = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
         const milestoneSound = new Audio('https://www.soundjay.com/mechanical/click-01.mp3');
 
+        function shuffleOptions(options) {
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            return options;
+        }
+
         function updateCard() {
             const card = flashcards[currentCardIndex];
             questionElement.textContent = card.question;
             answerElement.style.display = 'none';
             optionsElement.innerHTML = '';
-            card.options.forEach((option, index) => {
+            const shuffledOptions = shuffleOptions([...card.options]);
+            shuffledOptions.forEach((option, index) => {
                 const button = document.createElement('button');
                 button.textContent = option.text;
                 button.className = 'option';
-                button.onclick = () => checkAnswer(index);
+                button.onclick = () => checkAnswer(index, shuffledOptions);
                 optionsElement.appendChild(button);
             });
             updateProgress();
         }
 
-        function checkAnswer(index) {
-            const card = flashcards[currentCardIndex];
-            const selectedOption = card.options[index];
+        function checkAnswer(index, shuffledOptions) {
+            const selectedOption = shuffledOptions[index];
             const buttons = optionsElement.getElementsByTagName('button');
             for (let i = 0; i < buttons.length; i++) {
                 buttons[i].disabled = true;
-                if (card.options[i].correct) buttons[i].classList.add('correct');
+                if (shuffledOptions[i].correct) buttons[i].classList.add('correct');
                 else buttons[i].classList.add('wrong');
             }
             if (selectedOption.correct) {
