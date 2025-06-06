@@ -1,704 +1,432 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarjetas de estudio. Capacitación del Personal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        .card { perspective: 1000px; height: 400px; width: 600px; max-width: 90%; margin: 0 auto; }
-        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
-        .card.flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); background-color: #ffffff; }
-        .card-back { transform: rotateY(180deg); }
-        .shuffle-button:hover { transform: scale(1.05); transition: transform 0.2s; }
-        @media (max-width: 640px) { .card { height: 300px; } }
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #3a5d7d, #5a8295);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=1350&q=80'); /* Fábrica moderna */
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+        }
+        h1 {
+            color: #3a5d7d;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .card {
+            background: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+            position: relative;
+        }
+        .card::before {
+            content: '🛠️';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-size: 24px;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        .card-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .answer {
+            display: none;
+            font-style: italic;
+            color: #555;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #ddd;
+            border-radius: 5px;
+            height: 10px;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #3a5d7d;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        .trophy {
+            display: none;
+            font-size: 24px;
+            color: gold;
+            margin-top: 10px;
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.3s;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        #showAnswer {
+            background: #28a745;
+            color: #fff;
+        }
+        #nextCard, #prevCard {
+            background: #007bff;
+            color: #fff;
+        }
+        #shuffleCards {
+            background: #ff9500;
+            color: #fff;
+            font-size: 20px;
+        }
+        #modeSolo, #modeDuelo, #modeVsMachine {
+            background: #dc3545;
+            color: #fff;
+        }
+        #timer {
+            font-size: 16px;
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+        #results {
+            margin-top: 20px;
+            width: 100%;
+            height: 150px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: #3a5d7d;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        footer {
+            margin-top: 20px;
+            color: #3a5d7d;
+            font-size: 14px;
+        }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-3xl font-bold text-blue-600 mb-6">Tarjetas de estudio. Capacitación del Personal</h1>
-    <div class="card" id="card">
-        <div class="card-inner">
-            <div class="card-front bg-blue-100 text-center">
-                <p class="text-xl font-semibold" id="question"></p>
-            </div>
-            <div class="card-back bg-green-100 text-center">
-                <p class="text-lg" id="answer"></p>
-            </div>
+<body>
+    <div class="container">
+        <h1>🏭 Fábrica de Conocimiento: Capacitación del Personal</h1>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
         </div>
+        <div class="card" id="card">
+            <div class="card-text" id="question"></div>
+            <div class="answer" id="answer"></div>
+        </div>
+        <div id="trophies">Trofeos ganados: <span id="trophyCount">0</span></div>
+        <div class="trophy" id="trophyIcon">🏆 ¡Meta alcanzada!</div>
+        <div id="timer"></div>
+        <div class="button-container">
+            <button id="showAnswer">Mostrar Respuesta</button>
+            <button id="prevCard">Anterior</button>
+            <button id="nextCard">Siguiente</button>
+            <button id="shuffleCards">↬ Barajar</button>
+            <button id="modeSolo">Modo Solo</button>
+            <button id="modeDuelo">Duelo (2 Jugadores)</button>
+            <button id="modeVsMachine">Vs. Máquina</button>
+            <button id="sendResults">Enviar Resultados al Docente</button>
+        </div>
+        <textarea id="results" readonly placeholder="Aquí aparecerán tus resultados para copiar y enviar al docente."></textarea>
+        <footer>Creado por Prof. Rodolfo Cabral</footer>
     </div>
-    <div class="mt-4 flex space-x-4">
-        <button onclick="flipCard()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Mostrar Respuesta</button>
-        <button onclick="prevCard()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Anterior</button>
-        <button onclick="nextCard()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Siguiente</button>
-        <button onclick="shuffleCards()" class="shuffle-button bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 border-2 border-orange-300 font-bold flex items-center">↬ Barajar</button>
-    </div>
-    <p class="mt-4 text-gray-600">Tarjeta <span id="card-index">1</span> de <span id="total-cards"></span></p>
-    <p class="mt-2 text-gray-500">Haz clic en la tarjeta o en "Mostrar Respuesta" para ver la respuesta.</p>
-    <footer class="mt-8 text-gray-600">
-        <p>Creado por <strong>Prof. Rodolfo Cabral</strong></p>
-    </footer>
-
     <script>
         const flashcards = [
-            {
-                question: "¿Qué es el aprendizaje colaborativo?",
-                answer: "<strong>Aprendizaje colaborativo</strong>: Actividad de pequeños grupos en el aula donde los estudiantes intercambian información y trabajan en una tarea hasta que todos la comprenden, aprendiendo mediante colaboración."
-            },
-            {
-                question: "¿Qué caracteriza al aprendizaje incidental?",
-                answer: "<strong>Aprendizaje incidental</strong>: Ausencia de intención del alumno de aprender. Ocurre de manera no planificada."
-            },
-            {
-                question: "¿Cómo se define el aprendizaje intencional?",
-                answer: "<strong>Aprendizaje intencional</strong>: Proceso donde el alumno tiene la intención de aprender. Surge de un propósito consciente."
-            },
-            {
-                question: "¿Qué es el aprendizaje significativo?",
-                answer: "<strong>Aprendizaje significativo</strong>: Interacción de nueva información con estructuras de conceptos previas, generando significado, asimilación y reestructuración del conocimiento."
-            },
-            {
-                question: "¿Qué significa aptitud en el contexto laboral?",
-                answer: "<strong>Aptitud</strong>: Capacidad para realizar satisfactoriamente una tarea o desempeñar un cargo."
-            },
-            {
-                question: "¿Qué es el autodesarrollo?",
-                answer: "<strong>Autodesarrollo</strong>: Proceso continuo y autodirigido para mejorar habilidades, conocimientos y competencias, fomentando crecimiento personal y profesional."
-            },
-            {
-                question: "¿Qué implica la autogestión del aprendizaje?",
-                answer: "<strong>Autogestión del aprendizaje</strong>: Capacidad del individuo para planificar, ejecutar y evaluar su propio proceso de aprendizaje."
-            },
-            {
-                question: "¿Qué es el benchmarking en capacitación?",
-                answer: "<strong>Benchmarking</strong>: Búsqueda de las mejores prácticas de la industria para mejorar programas de capacitación. Definido por Robert C. Camp."
-            },
-            {
-                question: "¿Quiénes son los beneficiarios de un proyecto?",
-                answer: "<strong>Beneficiarios</strong>: Personas directa o indirectamente favorecidas por los objetivos y metas de un proyecto."
-            },
-            {
-                question: "¿Qué es el bienestar laboral?",
-                answer: "<strong>Bienestar laboral</strong>: Estado de satisfacción y salud (física, mental, emocional) de los empleados en su entorno de trabajo."
-            },
-            {
-                question: "¿Qué es el brainstorming como técnica didáctica?",
-                answer: "<strong>Brainstorming</strong>: Técnica donde un grupo pequeño expone libremente ideas sobre un tema o problema para generar soluciones originales."
-            },
-            {
-                question: "¿Qué significa blended learning?",
-                answer: "<strong>Blended learning</strong>: Combinación estructurada de formación presencial y online para crear experiencias de aprendizaje completas, flexibles y personalizadas."
-            },
-            {
-                question: "¿Cómo se define la capacitación?",
-                answer: "<strong>Capacitación</strong>: Proceso de enseñanza y aprendizaje dirigido a un público específico, enfocado en temáticas particulares según sus necesidades."
-            },
-            {
-                question: "¿Qué es la capacitación cruzada?",
-                answer: "<strong>Capacitación cruzada</strong>: Intercambio de puestos de trabajo entre empleados para desarrollar habilidades en roles no relacionados con el suyo."
-            },
-            {
-                question: "¿Qué caracteriza a la capacitación laboral?",
-                answer: "<strong>Capacitación laboral</strong>: Proceso educativo/formativo en el ámbito laboral, puede ser formal, no formal o informal, enfocado en aspectos técnicos, organizacionales o estratégicos."
-            },
-            {
-                question: "¿Qué es la capacitación por inducción?",
-                answer: "<strong>Capacitación por inducción</strong>: Orientada a trabajadores nuevos, proporcionando información básica sobre la organización y su rol laboral."
-            },
-            {
-                question: "¿Quién es el capacitador?",
-                answer: "<strong>Capacitador</strong>: Persona encargada de desempeñar el rol docente en un curso de capacitación laboral."
-            },
-            {
-                question: "¿Qué es el capital humano según Gary S. Becker?",
-                answer: "<strong>Capital humano</strong>: Acumulación de inversiones en personas (educación, capacitación, salud, experiencia) que mejora productividad y ganancias."
-            },
-            {
-                question: "¿Qué implica la certificación de competencias?",
-                answer: "<strong>Certificación de competencias</strong>: Verificación y acreditación formal de habilidades, conocimientos y atributos para una función laboral, según estándares preestablecidos."
-            },
-            {
-                question: "¿Cómo se define el clima organizacional?",
-                answer: "<strong>Clima organizacional</strong>: Percepción de los miembros sobre su entorno laboral, influyendo en su motivación y comportamiento."
-            },
-            {
-                question: "¿Qué es la clínica del rumor?",
-                answer: "<strong>Clínica del rumor</strong>: Técnica didáctica que demuestra cómo se crean rumores y se distorsiona la realidad mediante testimonios sucesivos."
-            },
-            {
-                question: "¿Qué significa coaching en capacitación?",
-                answer: "<strong>Coaching</strong>: Función del supervisor para ayudar a evaluar tareas, detectar errores, analizar consecuencias y explorar alternativas de acción."
-            },
-            {
-                question: "¿Qué es la coherencia interna en proyectos?",
-                answer: "<strong>Coherencia interna</strong>: Combinación armónica de elementos de un proyecto de capacitación (objetivos, contenidos, actividades, recursos) que adquieren sentido en el conjunto."
-            },
-            {
-                question: "¿Qué implica la coherencia externa en proyectos?",
-                answer: "<strong>Coherencia externa</strong>: Relación del proyecto con la demanda que responde y con otros programas de capacitación."
-            },
-            {
-                question: "¿Qué es una cohorte en el contexto educativo?",
-                answer: "<strong>Cohorte</strong>: Grupo de individuos que comienzan y avanzan juntos en un programa de formación."
-            },
-            {
-                question: "¿Qué son las competencias blandas?",
-                answer: "<strong>Competencias blandas</strong>: Habilidades interpersonales y características personales que facilitan la interacción efectiva y el éxito laboral."
-            },
-            {
-                question: "¿Qué son las competencias duras?",
-                answer: "<strong>Competencias duras</strong>: Habilidades técnicas y conocimientos específicos, certificables, necesarios para una tarea laboral."
-            },
-            {
-                question: "¿Qué caracteriza a las competencias profesionales?",
-                answer: "<strong>Competencias profesionales</strong>: Combinación de conocimientos, habilidades, valores motivadores y creencias que permiten un desempeño innovador."
-            },
-            {
-                question: "¿Cómo se define la conducta?",
-                answer: "<strong>Conducta</strong>: Conjunto de acciones observables y descriptibles."
-            },
-            {
-                question: "¿Qué es la confiabilidad en instrumentos de evaluación?",
-                answer: "<strong>Confiabilidad</strong>: Estabilidad y calidad de un instrumento de evaluación para arrojar resultados similares en grupos homogéneos."
-            },
-            {
-                question: "¿Qué son los contenidos en un proyecto de capacitación?",
-                answer: "<strong>Contenidos</strong>: Temas a enseñar o considerar durante un programa de capacitación."
-            },
-            {
-                question: "¿Qué implica la coordinación en un equipo?",
-                answer: "<strong>Coordinación</strong>: Sincronización y unificación de acciones de un grupo hacia un objetivo común."
-            },
-            {
-                question: "¿Qué es la cualificación laboral?",
-                answer: "<strong>Cualificación</strong>: Nivel de formación necesario para una ocupación laboral."
-            },
-            {
-                question: "¿Qué es la cultura organizacional?",
-                answer: "<strong>Cultura organizacional</strong>: Patrón de supuestos básicos que un grupo desarrolla para responder a demandas externas manteniendo coherencia interna."
-            },
-            {
-                question: "¿Qué representa la curva de aprendizaje?",
-                answer: "<strong>Curva de aprendizaje</strong>: Representación gráfica del progreso en la adquisición de conocimientos o habilidades con el tiempo o la práctica."
-            },
-            {
-                question: "¿Qué es el debate dirigido como técnica didáctica?",
-                answer: "<strong>Debate dirigido</strong>: Discusión informal de un grupo reducido sobre un tema, guiada por un conductor."
-            },
-            {
-                question: "¿Qué es el diagnóstico en capacitación?",
-                answer: "<strong>Diagnóstico</strong>: Examen de una situación para identificar y solucionar problemas."
-            },
-            {
-                question: "¿Qué es el diagnóstico de necesidades de capacitación (DNC)?",
-                answer: "<strong>Diagnóstico de necesidades de capacitación (DNC)</strong>: Proceso sistemático para identificar brechas entre el desempeño actual y deseado, determinando necesidades de formación."
-            },
-            {
-                question: "¿Qué son los diálogos simultáneos?",
-                answer: "<strong>Diálogos simultáneos</strong>: Técnica didáctica donde los miembros de un grupo dialogan de a dos sobre temas relevantes."
-            },
-            {
-                question: "¿Qué implica el diseño en proyectos de capacitación?",
-                answer: "<strong>Diseño</strong>: Planificación de la actividad de capacitación, combinando armónicamente elementos internos a partir de una idea global."
-            },
-            {
-                question: "¿Cómo se define la educación?",
-                answer: "<strong>Educación</strong>: Proceso interior de formación del hombre mediante acción consciente y estímulo sociocultural."
-            },
-            {
-                question: "¿Qué es la educación de adultos según la UNESCO?",
-                answer: "<strong>Educación de adultos</strong>: Procesos organizados de educación, formales o no formales, para desarrollar aptitudes, conocimientos y competencias en adultos."
-            },
-            {
-                question: "¿Qué es la educación formal según Coombs?",
-                answer: "<strong>Educación formal</strong>: Sistema educativo institucionalizado, cronológicamente graduado y jerárquicamente estructurado, desde la escuela inicial hasta la universidad."
-            },
-            {
-                question: "¿Qué caracteriza a la educación informal?",
-                answer: "<strong>Educación informal</strong>: Conocimientos adquiridos libre y espontáneamente de diversas fuentes no estructuradas."
-            },
-            {
-                question: "¿Qué es la educación no formal según Coombs?",
-                answer: "<strong>Educación no formal</strong>: Actividad educacional sistemática fuera del sistema formal, dirigida a subgrupos específicos."
-            },
-            {
-                question: "¿Qué implica la educación permanente?",
-                answer: "<strong>Educación permanente</strong>: Enfoque que integra la educación a lo largo de la vida, considerando necesidades sociales, económicas y familiares."
-            },
-            {
-                question: "¿Qué es la eficacia de la capacitación?",
-                answer: "<strong>Eficacia de la capacitación</strong>: Grado en que un programa logra sus objetivos, evaluado por el aprendizaje y su aplicación en el trabajo."
-            },
-            {
-                question: "¿Qué es la eficiencia de la capacitación?",
-                answer: "<strong>Eficiencia de la capacitación</strong>: Relación entre resultados obtenidos y recursos invertidos (tiempo, dinero, personal)."
-            },
-            {
-                question: "¿Qué es el e-learning?",
-                answer: "<strong>e-Learning</strong>: Proceso de enseñanza y aprendizaje a través de redes de comunicación electrónicas (internet o intranet)."
-            },
-            {
-                question: "¿Qué es el e-learning sincrónico?",
-                answer: "<strong>e-Learning sincrónico</strong>: Modalidad en línea donde participantes e instructor interactúan en tiempo real mediante herramientas virtuales."
-            },
-            {
-                question: "¿Qué significa empowerment en una organización?",
-                answer: "<strong>Empowerment</strong>: Estilo organizativo que permite a los equipos cambiar el saber organizativo."
-            },
-            {
-                question: "¿Para qué sirven las encuestas en capacitación?",
-                answer: "<strong>Encuestas</strong>: Herramientas para recolectar datos que se transforman en información para la toma de decisiones."
-            },
-            {
-                question: "¿Qué es un enfoque en un proyecto?",
-                answer: "<strong>Enfoque</strong>: Dirección o procedimiento adoptado para valorar y tratar problemas relacionados con un proyecto."
-            },
-            {
-                question: "¿Cómo se define la enseñanza?",
-                answer: "<strong>Enseñanza</strong>: Actividad intencional diseñada por el docente para facilitar el aprendizaje en un contexto institucional."
-            },
-            {
-                question: "¿Qué es un entorno virtual de aprendizaje (EVA)?",
-                answer: "<strong>Entorno virtual de aprendizaje (EVA)</strong>: Espacio digital para gestionar contenidos educativos, actividades de aprendizaje y comunicación entre docentes y estudiantes."
-            },
-            {
-                question: "¿Qué son las entrevistas como método de investigación?",
-                answer: "<strong>Entrevistas</strong>: Método para obtener datos y opiniones mediante preguntas formuladas a una persona."
-            },
-            {
-                question: "¿Qué es una entrevista colectiva?",
-                answer: "<strong>Entrevista colectiva</strong>: Técnica didáctica donde un equipo interroga a un experto sobre un tema de interés ante un auditorio."
-            },
-            {
-                question: "¿Qué caracteriza a un equipo?",
-                answer: "<strong>Equipo</strong>: Conjunto de personas con alta interdependencia, especialización y madurez en su interrelación, orientadas a un propósito compartido."
-            },
-            {
-                question: "¿Qué es una estrategia en capacitación?",
-                answer: "<strong>Estrategia</strong>: Guía de acción que coordina actividades hacia un objetivo específico."
-            },
-            {
-                question: "¿Qué es una estrategia didáctica?",
-                answer: "<strong>Estrategia didáctica</strong>: Planificación del proceso de enseñanza-aprendizaje con decisiones conscientes sobre técnicas y actividades para alcanzar objetivos."
-            },
-            {
-                question: "¿Qué es la estructura cognitiva?",
-                answer: "<strong>Estructura cognitiva</strong>: Forma en que un individuo organiza su visión del mundo y la realidad mediante experiencias y aprendizajes."
-            },
-            {
-                question: "¿Qué es la estructura organizacional?",
-                answer: "<strong>Estructura organizacional</strong>: Disposición de recursos de una empresa para cumplir funciones y alcanzar objetivos."
-            },
-            {
-                question: "¿Qué es el estudio de casos como técnica didáctica?",
-                answer: "<strong>Estudio de casos</strong>: Análisis exhaustivo de un caso para extraer conclusiones basadas en intereses y experiencias del grupo."
-            },
-            {
-                question: "¿Qué es la evaluación en capacitación?",
-                answer: "<strong>Evaluación</strong>: Proceso de obtención de información para formular juicios y tomar decisiones."
-            },
-            {
-                question: "¿Qué es la evaluación de aprendizaje?",
-                answer: "<strong>Evaluación de aprendizaje</strong>: Informa sobre conocimientos o actitudes adquiridos durante la capacitación."
-            },
-            {
-                question: "¿Qué es la evaluación de proceso?",
-                answer: "<strong>Evaluación de proceso</strong>: Realizada durante el proceso de enseñanza-aprendizaje para reajustar elementos del programa."
-            },
-            {
-                question: "¿Qué es la evaluación de producto o final?",
-                answer: "<strong>Evaluación de producto o final</strong>: Califica a un individuo o grupo para comprobar la eficacia de la enseñanza."
-            },
-            {
-                question: "¿Qué es la evaluación de reacción?",
-                answer: "<strong>Evaluación de reacción</strong>: Conoce el juicio de los participantes sobre el programa o proyecto."
-            },
-            {
-                question: "¿Qué es la evaluación de resultados?",
-                answer: "<strong>Evaluación de resultados</strong>: Detecta la contribución del programa a los objetivos de la empresa."
-            },
-            {
-                question: "¿Qué es la evaluación de utilización?",
-                answer: "<strong>Evaluación de utilización</strong>: Establece si los efectos de la capacitación se aplican en la práctica laboral."
-            },
-            {
-                question: "¿Qué es la evaluación del desempeño?",
-                answer: "<strong>Evaluación del desempeño</strong>: Evaluación del comportamiento del sujeto en una situación laboral concreta."
-            },
-            {
-                question: "¿Qué es la evaluación inicial o diagnóstica?",
-                answer: "<strong>Evaluación inicial o diagnóstica</strong>: Detecta habilidades y conocimientos previos al inicio del proceso de enseñanza-aprendizaje."
-            },
-            {
-                question: "¿Qué es la evaluación 360 grados?",
-                answer: "<strong>Evaluación 360 grados</strong>: Proceso de retroalimentación donde un empleado recibe aportes de supervisores, pares, subordinados y clientes."
-            },
-            {
-                question: "¿Qué es la experiencia del empleado?",
-                answer: "<strong>Experiencia del empleado</strong>: Suma de todas las interacciones de un empleado con la organización, desde el reclutamiento hasta su salida."
-            },
-            {
-                question: "¿Qué es la exposición como técnica didáctica?",
-                answer: "<strong>Exposición</strong>: Presentación estructurada de un tema, principalmente mediante lenguaje oral o escrito."
-            },
-            {
-                question: "¿Qué es la flexibilidad curricular?",
-                answer: "<strong>Flexibilidad curricular</strong>: Capacidad de un programa de capacitación para adaptarse a necesidades individuales, cambios laborales o demandas del mercado."
-            },
-            {
-                question: "¿Qué es la finalidad en un proyecto?",
-                answer: "<strong>Finalidad</strong>: Impacto a largo plazo que se busca lograr con un proyecto."
-            },
-            {
-                question: "¿Qué es el foro como técnica didáctica?",
-                answer: "<strong>Foro</strong>: Discusión informal de un grupo sobre un tema, conducida por un coordinador."
-            },
-            {
-                question: "¿Qué es la fundamentación o justificación en proyectos?",
-                answer: "<strong>Fundamentación o justificación</strong>: Criterios y razones que justifican la realización de un proyecto."
-            },
-            {
-                question: "¿Qué es la formación?",
-                answer: "<strong>Formación</strong>: Estudios y aprendizajes orientados a la inserción, reinserción y actualización laboral."
-            },
-            {
-                question: "¿Qué es la gamificación en capacitación?",
-                answer: "<strong>Gamificación</strong>: Aplicación de elementos de juegos en contextos no lúdicos para aumentar motivación, compromiso y aprendizaje."
-            },
-            {
-                question: "¿Qué es la gestión del conocimiento?",
-                answer: "<strong>Gestión del conocimiento</strong>: Proceso sistemático de crear, organizar, compartir y aplicar conocimiento para mejorar el desempeño organizacional."
-            },
-            {
-                question: "¿Qué es la gestión del talento?",
-                answer: "<strong>Gestión del talento</strong>: Proceso estratégico para atraer, desarrollar, motivar y retener empleados valiosos."
-            },
-            {
-                question: "¿Qué es un grupo en el contexto organizacional?",
-                answer: "<strong>Grupo</strong>: Conjunto de personas que interactúan con una historia o propósito compartido."
-            },
-            {
-                question: "¿Qué es una habilidad?",
-                answer: "<strong>Habilidad</strong>: Capacidad para realizar una tarea con destreza y facilidad."
-            },
-            {
-                question: "¿Qué es la hipótesis del injerto?",
-                answer: "<strong>Hipótesis del injerto</strong>: Capacitación vista como un cuerpo extraño en la organización, generando resistencias."
-            },
-            {
-                question: "¿Qué son los incentivos en capacitación?",
-                answer: "<strong>Incentivos</strong>: Recompensas o estímulos para motivar a los empleados a participar y aplicar lo aprendido."
-            },
-            {
-                question: "¿Qué es un indicador en proyectos?",
-                answer: "<strong>Indicador</strong>: Dato estadístico que mide cuánto se ha avanzado en una actividad hacia las metas establecidas."
-            },
-            {
-                question: "¿Qué son los indicadores de evaluación?",
-                answer: "<strong>Indicadores de evaluación</strong>: Signos que miden grados y variaciones de una actividad respecto a metas."
-            },
-            {
-                question: "¿Qué es la ingeniería de la capacitación?",
-                answer: "<strong>Ingeniería de la capacitación</strong>: Metodología para anticipar aspectos contextuales y pedagógicos, ajustando la capacitación a la demanda."
-            },
-            {
-                question: "¿Qué es la inteligencia emocional según Goleman?",
-                answer: "<strong>Inteligencia emocional</strong>: Capacidad de reconocer, entender y gestionar emociones propias y ajenas para guiar el pensamiento y la acción."
-            },
-            {
-                question: "¿Qué es la inversión en capacitación?",
-                answer: "<strong>Inversión en capacitación</strong>: Asignación de recursos para desarrollar habilidades y conocimientos, buscando mejorar el desempeño y la competitividad."
-            },
-            {
-                question: "¿Qué es el job rotation?",
-                answer: "<strong>Job rotation</strong>: Práctica de mover a los empleados entre diferentes puestos para ampliar habilidades y perspectivas."
-            },
-            {
-                question: "¿Qué es el just-in-time training?",
-                answer: "<strong>Just-in-time training</strong>: Capacitación entregada en el momento exacto en que el empleado la necesita para una tarea específica."
-            },
-            {
-                question: "¿Qué es el macrodiseño didáctico?",
-                answer: "<strong>Macrodiseño didáctico</strong>: Definición global de la metodología de enseñanza, asignación de recursos, tiempos, selección de alumnos e instructores, y criterios de evaluación."
-            },
-            {
-                question: "¿Qué es el mentoring?",
-                answer: "<strong>Mentoring</strong>: Relación en la que un mentor protege a un aprendiz para guiar el desarrollo de habilidades, conocimientos y perspectivas."
-            },
-            {
-                question: "¿Qué es la mesa redonda como técnica didáctica?",
-                answer: "<strong>Mesa redonda</strong>: Equipo de especialistas con puntos de vista divergentes exponen sucesivamente sobre un tema ante un grupo."
-            },
-            {
-                question: "¿Qué son las metas claras en un proyecto?",
-                answer: "<strong>Metas claras</strong>: Logros específicos que operacionalizan los objetivos, definiendo cómo y cuándo se alcanzarán."
-            },
-            {
-                question: "¿Qué es un método en capacitación?",
-                answer: "<strong>Método</strong>: Procedimientos ordenados para realizar la adquisición de conocimientos o la investigación."
-            },
-            {
-                question: "¿Qué son las modalidades de acción en capacitación?",
-                answer: "<strong>Modalidades de aprendizaje</strong>: Formas de ofrecer un programa de formación (presencial, virtual, blended learning, en el puesto de trabajo)."
-            },
-            {
-                question: "¿Qué es la motivación intrínseca?",
-                answer: "<strong>Motivación intrínseca</strong>: Tendencia a buscar desafíos y aprender por interés propio, sin necesidad de recompensas externas."
-            },
-            {
-                question: "¿Qué es una organización?",
-                answer: "<strong>Organización</strong>: Sistema socio-técnico abierto que intercambia energía, materia, información y recursos con su entorno."
-            },
-            {
-                question: "¿Qué es el panel como técnica didáctica?",
-                answer: "<strong>Panel</strong>: Discusión dialogada de un equipo de expertos sobre un tema educativo ante un grupo."
-            },
-            {
-                question: "¿Qué es la pedagogía?",
-                answer: "<strong>Pedagogía</strong>: Ciencia y arte de la educación y la enseñanza, enfocada en métodos y principios para guiar el aprendizaje."
-            },
-            {
-                question: "¿Qué es el pequeño grupo pequeño de discusión?",
-                answer: "<strong>Pequeño grupo pequeño de discusión</strong>: Grupo reducido que trata temas en una discusión libre e informal, guiado por un coordinador."
-            },
-            {
-                question: "¿Qué es la técnica Phillips 66?",
-                answer: "<strong>Phillips 66</strong>: Técnica donde un grupo grande se divide en subgrupos de seis personas para discutir un tema durante seis minutos y llegar a conclusiones."
-            },
-            {
-                question: "¿Qué es un plan en capacitación?",
-                answer: "<strong>Plan</strong>: Decisiones generales que establecen directrices, prioridades, recursos y estrategias para alcanzar objetivos."
-            },
-            {
-                question: "¿Qué significa planificar?",
-                answer: "<strong>Planificar</strong>: Instrumentar decisiones mediante recursos humanos y no humanos para obtener resultados esperados."
-            },
-            {
-                question: "¿Qué es el potencial en el contexto laboral?",
-                answer: "<strong>Potencial</strong>: Capacidad para generar impacto positivo en uno mismo, la sociedad y el entorno."
-            },
-            {
-                question: "¿Qué es una conducta proactiva?",
-                answer: "<strong>Conducta proactiva</strong>: Capacidad de promover situaciones positivas mediante la anticipación a conductas reactivas."
-            },
-            {
-                question: "¿Cuál es la diferencia entre proceso y procedimiento?",
-                answer: "<strong>Proceso</strong>: Serie de actos que forman parte de un todo. <strong>Procedimiento</strong>: Método o esquema para realizar una tarea."
-            },
-            {
-                question: "¿Qué es la productividad?",
-                answer: "<strong>Productividad</strong>: Relación entre bienes/servicios producidos y recursos utilizados."
-            },
-            {
-                question: "¿Qué es un programa en capacitación?",
-                answer: "<strong>Programa</strong>: Conjunto organizado de actividades, servicios o procesos relacionados, coordinados entre sí."
-            },
-            {
-                question: "¿Qué es un proyecto?",
-                answer: "<strong>Proyecto</strong>: Conjunto de actividades interrelacionadas para producir bienes/servicios que resuelvan necesidades o problemas."
-            },
-            {
-                question: "¿Qué es un proyecto educativo?",
-                answer: "<strong>Proyecto educativo</strong>: Conjunto de operaciones para modificar una situación educativa inicial, mejorando condiciones sociales y educativas."
-            },
-            {
-                question: "¿Qué es la racionalidad en proyectos?",
-                answer: "<strong>Racionalidad</strong>: Conocimiento completo de factores, ordenamiento de prioridades y selección de alternativas para maximizar la utilidad."
-            },
-            {
-                question: "¿Qué es la racionalidad organizativa?",
-                answer: "<strong>Racionalidad organizativa</strong>: Modo de entender la organización, ajustándola a demandas internas y externas mediante la discusión de perspectivas."
-            },
-            {
-                question: "¿Qué es el reconocimiento en el ámbito laboral?",
-                answer: "<strong>Reconocimiento</strong>: Valoración formal o informal de las contribuciones, desempeño o logros de un individuo o equipo."
-            },
-            {
-                question: "¿Qué es una red de programa?",
-                answer: "<strong>Red de programa</strong>: Sujetos que comparten una percepción común de un problema y ven un proyecto de capacitación como solución."
-            },
-            {
-                question: "¿Qué es el reentrenamiento?",
-                answer: "<strong>Reentrenamiento</strong>: Capacitación en nuevas habilidades debido a cambios en puestos, tecnología o demandas del mercado."
-            },
-            {
-                question: "¿Qué es la resiliencia en el contexto organizacional?",
-                answer: "<strong>Resiliencia</strong>: Capacidad de adaptarse y recuperarse positivamente ante adversidades, estrés o cambios."
-            },
-            {
-                question: "¿Qué es el ROI en capacitación?",
-                answer: "<strong>ROI (Retorno de la Inversión)</strong>: Métrica que compara los beneficios monetarios de un programa de capacitación con sus costos."
-            },
-            {
-                question: "¿Qué es el rol docente?",
-                answer: "<strong>Rol docente</strong>: Conjunto de actividades conductuales/actitudinales del docente para planificar, coordinar, evaluar y reformular la enseñanza."
-            },
-            {
-                question: "¿Qué es el role-playing como técnica didáctica?",
-                answer: "<strong>Role-playing</strong>: Representación de una situación real donde los participantes asumen roles para comprenderla y tratarla."
-            },
-            {
-                question: "¿Qué son las rotaciones en el trabajo?",
-                answer: "<strong>Rotaciones</strong>: Práctica de mover a una persona entre diferentes puestos para obtener una visión global del trabajo."
-            },
-            {
-                question: "¿Qué son los saberes socialmente productivos?",
-                answer: "<strong>Saberes socialmente productivos</strong>: Conocimientos que transforman a los sujetos, la naturaleza y la cultura, generando nuevos sentidos."
-            },
-            {
-                question: "¿Qué es la satisfacción laboral según Locke?",
-                answer: "<strong>Satisfacción laboral</strong>: Estado emocional positivo derivado de la evaluación de experiencias laborales."
-            },
-            {
-                question: "¿Qué es una secuencia didáctica?",
-                answer: "<strong>Secuencia didáctica</strong>: Conjunto ordenado de actividades para alcanzar objetivos educativos, con principio y fin definidos."
-            },
-            {
-                question: "¿Qué es un seminario como técnica didáctica?",
-                answer: "<strong>Seminario</strong>: Grupo reducido que investiga un tema en sesiones planificadas con fuentes originales."
-            },
-            {
-                question: "¿Qué es un simposio?",
-                answer: "<strong>Simposio</strong>: Equipo de especialistas que desarrolla diferentes aspectos de un tema sucesivamente, sumando información."
-            },
-            {
-                question: "¿Qué es la sinergia en proyectos?",
-                answer: "<strong>Sinergia</strong>: Potenciación de un proyecto mediante la coordinación de acciones que refuerzan mutuamente sus efectos."
-            },
-            {
-                question: "¿Qué es la socialización según German Rey?",
-                answer: "<strong>Socialización</strong>: Proceso relacional que conforma al ser humano mediante la interiorización de normas, valores y creencias."
-            },
-            {
-                question: "¿Qué es el storytelling en capacitación?",
-                answer: "<strong>Storytelling</strong>: Uso de narrativas o casos reales para ilustrar conceptos, emocionar y facilitar la retención del aprendizaje."
-            },
-            {
-                question: "¿Qué es un taller como estrategia didáctica?",
-                answer: "<strong>Taller</strong>: Estrategia donde los participantes aprenden haciendo, reflexionando y elaborando productos en un proceso grupal."
-            },
-            {
-                question: "¿Qué es una tarea en un proyecto?",
-                answer: "<strong>Tarea</strong>: Acción específica que operacionaliza una actividad dentro de un proyecto."
-            },
-            {
-                question: "¿Qué es una técnica didáctica?",
-                answer: "<strong>Técnica didáctica</strong>: Procedimiento lógico para orientar el aprendizaje en un sector específico del curso."
-            },
-            {
-                question: "¿Qué es la técnica del riesgo?",
-                answer: "<strong>Técnica del riesgo</strong>: Grupo expresa y discute riesgos potenciales de una nueva situación."
-            },
-            {
-                question: "¿Qué son las técnicas de recolección de datos?",
-                answer: "<strong>Técnicas de recolección de datos</strong>: Herramientas (tests, entrevistas, encuestas, observaciones) para recopilar información sobre una situación."
-            },
-            {
-                question: "¿Qué son las tecnologías de la información y comunicación (TICs)?",
-                answer: "<strong>Tecnologías de la información y comunicación (TICs)</strong>: Herramientas tecnológicas para crear, procesar, almacenar y difundir información."
-            },
-            {
-                question: "¿Qué es la transferencia del aprendizaje?",
-                answer: "<strong>Transferencia del aprendizaje</strong>: Grado en que conocimientos, habilidades y actitudes adquiridos se aplican en el trabajo."
-            },
-            {
-                question: "¿Qué es la tutoría?",
-                answer: "<strong>Tutoría</strong>: Relación de apoyo individualizada donde un tutor guía al aprendiz en su desarrollo."
-            },
-            {
-                question: "¿Qué es el universo educativo?",
-                answer: "<strong>Universo educativo</strong>: Conjunto de experiencias educativas abarcadas por la educación formal, no formal e informal."
-            },
-            {
-                question: "¿Qué es la validez en instrumentos de evaluación?",
-                answer: "<strong>Validez</strong>: Propiedad de los indicadores para medir lo que pretenden, sin desviaciones."
-            },
-            {
-                question: "¿Qué son los valores organizacionales?",
-                answer: "<strong>Valores organizacionales</strong>: Principios y creencias compartidas que guían el comportamiento y las decisiones en una organización."
-            },
-            {
-                question: "¿Qué es la verificabilidad en proyectos?",
-                answer: "<strong>Verificabilidad</strong>: Propiedad de los indicadores para comprobar empíricamente los cambios producidos por un proyecto."
-            },
-            {
-                question: "¿Qué es un webinar?",
-                answer: "<strong>Webinar</strong>: Conferencia o taller transmitido en vivo por internet, con interacción en tiempo real."
-            },
-            {
-                question: "¿Qué es un workshop?",
-                answer: "<strong>Workshop</strong>: Sesión intensiva y práctica para adquirir conocimientos y habilidades mediante colaboración."
-            }
+            { question: "¿Qué es el aprendizaje colaborativo?", answer: "El aprendizaje colaborativo es un proceso donde los estudiantes trabajan juntos para resolver problemas y aprender mutuamente." },
+            { question: "¿Qué son las competencias laborales?", answer: "Las competencias laborales son habilidades como comunicación, trabajo en equipo y resolución de problemas necesarias para el desempeño laboral." },
+            { question: "¿Qué son las técnicas didácticas?", answer: "Las técnicas didácticas son métodos que facilitan la enseñanza y el aprendizaje de manera efectiva." },
+            { question: "¿Qué es la empatía en el aprendizaje?", answer: "La empatía en el aprendizaje es la capacidad de entender y compartir los sentimientos de otros para mejorar la colaboración." },
+            { question: "¿Qué es la resolución de problemas?", answer: "La resolución de problemas es el proceso de identificar, analizar y solucionar un desafío de manera efectiva." },
+            { question: "¿Qué es el trabajo en equipo?", answer: "El trabajo en equipo es la colaboración entre personas para alcanzar un objetivo común de manera eficiente." },
+            { question: "¿Qué significa comunicación efectiva?", answer: "La comunicación efectiva es transmitir ideas de forma clara y comprensible para evitar malentendidos." },
+            { question: "¿Qué es la planificación en el trabajo?", answer: "La planificación en el trabajo es organizar tareas y recursos para cumplir metas en un tiempo determinado." },
+            { question: "¿Qué son las habilidades blandas?", answer: "Las habilidades blandas son cualidades como la empatía, la adaptabilidad y la inteligencia emocional que mejoran las relaciones laborales." },
+            { question: "¿Qué es la evaluación del desempeño?", answer: "La evaluación del desempeño es el proceso de medir las habilidades y resultados de un empleado para mejorar su desarrollo." },
+            { question: "¿Qué es el liderazgo en un equipo?", answer: "El liderazgo en un equipo es guiar y motivar a los miembros para alcanzar objetivos compartidos." },
+            { question: "¿Qué significa tomar decisiones?", answer: "Tomar decisiones es elegir la mejor opción entre varias alternativas tras analizar las consecuencias." },
+            { question: "¿Qué es la capacitación continua?", answer: "La capacitación continua es el aprendizaje constante para mantener y mejorar habilidades laborales." },
+            { question: "¿Qué son los objetivos laborales?", answer: "Los objetivos laborales son metas específicas que una persona o equipo busca alcanzar en el trabajo." },
+            { question: "¿Qué es la gestión del tiempo?", answer: "La gestión del tiempo es organizar y priorizar tareas para maximizar la productividad." },
+            { question: "¿Qué significa adaptabilidad?", answer: "La adaptabilidad es la capacidad de ajustarse a cambios o nuevas situaciones en el entorno laboral." },
+            { question: "¿Qué es el feedback?", answer: "El feedback es la retroalimentación constructiva que ayuda a mejorar el desempeño laboral." },
+            { question: "¿Qué son las normas de seguridad?", answer: "Las normas de seguridad son reglas que protegen a los trabajadores de riesgos en el ambiente laboral." },
+            { question: "¿Qué es la motivación en el trabajo?", answer: "La motivación en el trabajo es el impulso interno o externo que lleva a una persona a realizar sus tareas." },
+            { question: "¿Qué significa resolver conflictos?", answer: "Resolver conflictos es mediar entre partes para encontrar una solución pacífica y beneficiosa." },
+            { question: "¿Qué es la innovación en el trabajo?", answer: "La innovación en el trabajo es crear nuevas ideas o métodos para mejorar procesos laborales." },
+            { question: "¿Qué son las metas a corto plazo?", answer: "Las metas a corto plazo son objetivos alcanzables en un período breve, como días o semanas." },
+            { question: "¿Qué significa delegar tareas?", answer: "Delegar tareas es asignar responsabilidades a otros miembros del equipo para optimizar el trabajo." },
+            { question: "¿Qué es la ética laboral?", answer: "La ética laboral es el conjunto de valores y principios que guían el comportamiento en el trabajo." },
+            { question: "¿Qué son las habilidades técnicas?", answer: "Las habilidades técnicas son conocimientos específicos requeridos para realizar tareas laborales, como usar software o maquinaria." },
+            { question: "¿Qué es el desarrollo profesional?", answer: "El desarrollo profesional es el proceso de mejorar habilidades y conocimientos para avanzar en la carrera." },
+            { question: "¿Qué significa trabajar bajo presión?", answer: "Trabajar bajo presión es realizar tareas eficientemente en situaciones de estrés o plazos ajustados." },
+            { question: "¿Qué es la cooperación?", answer: "La cooperación es la colaboración activa entre individuos para alcanzar un objetivo común." },
+            { question: "¿Qué son los recursos humanos?", answer: "Los recursos humanos son las personas que forman parte de una organización y sus habilidades." },
+            { question: "¿Qué es la productividad?", answer: "La productividad es la eficiencia con la que se utilizan los recursos para generar resultados." },
+            { question: "¿Qué significa liderazgo situacional?", answer: "El liderazgo situacional es adaptar el estilo de liderazgo según las necesidades del equipo o tarea." },
+            { question: "¿Qué es la formación en el trabajo?", answer: "La formación en el trabajo es el entrenamiento proporcionado para mejorar las competencias laborales." },
+            { question: "¿Qué son las políticas de empresa?", answer: "Las políticas de empresa son reglas establecidas para guiar el comportamiento y las operaciones." },
+            { question: "¿Qué significa creatividad laboral?", answer: "La creatividad laboral es generar ideas originales para resolver problemas o mejorar procesos." },
+            { question: "¿Qué es la autoevaluación?", answer: "La autoevaluación es reflexionar sobre el propio desempeño para identificar áreas de mejora." },
+            { question: "¿Qué son las metas a largo plazo?", answer: "Las metas a largo plazo son objetivos que requieren meses o años para alcanzarse." },
+            { question: "¿Qué significa supervisión?", answer: "La supervisión es monitorear el trabajo de otros para asegurar que se cumplan los estándares." },
+            { question: "¿Qué es la cultura organizacional?", answer: "La cultura organizacional es el conjunto de valores y creencias que definen a una empresa." },
+            { question: "¿Qué son las dinámicas de grupo?", answer: "Las dinámicas de grupo son actividades que fomentan la colaboración y la comunicación en un equipo." },
+            { question: "¿Qué significa responsabilidad laboral?", answer: "La responsabilidad laboral es cumplir con las tareas asignadas de manera confiable." },
+            { question: "¿Qué es el aprendizaje activo?", answer: "El aprendizaje activo es participar activamente en el proceso educativo en lugar de solo escuchar." },
+            { question: "¿Qué son las herramientas digitales?", answer: "Las herramientas digitales son programas o dispositivos que facilitan tareas laborales modernas." },
+            { question: "¿Qué significa flexibilidad laboral?", answer: "La flexibilidad laboral es adaptarse a horarios o condiciones de trabajo variables." },
+            { question: "¿Qué es la mentoría?", answer: "La mentoría es la guía de un experto a un aprendiz para desarrollar habilidades." },
+            { question: "¿Qué son las habilidades de negociación?", answer: "Las habilidades de negociación son la capacidad de llegar a acuerdos beneficiosos para todas las partes." },
+            { question: "¿Qué significa compromiso laboral?", answer: "El compromiso laboral es la dedicación y lealtad hacia las metas de la empresa." },
+            { question: "¿Qué es la seguridad laboral?", answer: "La seguridad laboral es proteger la salud y bienestar de los empleados en el trabajo." },
+            { question: "¿Qué son los indicadores de desempeño?", answer: "Los indicadores de desempeño son métricas que miden el éxito de las actividades laborales." },
+            { question: "¿Qué significa empoderamiento?", answer: "El empoderamiento es dar a los empleados autoridad y confianza para tomar decisiones." },
+            { question: "¿Qué es la retroalimentación positiva?", answer: "La retroalimentación positiva es reconocer y reforzar los logros de un empleado." },
+            { question: "¿Qué son las técnicas de motivación?", answer: "Las técnicas de motivación son estrategias para inspirar a los trabajadores a dar lo mejor." },
+            { question: "¿Qué significa resiliencia?", answer: "La resiliencia es la capacidad de recuperarse y adaptarse ante adversidades laborales." },
+            { question: "¿Qué es la gestión de proyectos?", answer: "La gestión de proyectos es planificar y coordinar tareas para completar un objetivo." },
+            { question: "¿Qué son las entrevistas de trabajo?", answer: "Las entrevistas de trabajo son reuniones para evaluar la idoneidad de un candidato." },
+            { question: "¿Qué significa multitarea?", answer: "La multitarea es manejar varias actividades simultáneamente de forma eficiente." },
+            { question: "¿Qué es la inclusión laboral?", answer: "La inclusión laboral es integrar a personas de diversos backgrounds en el trabajo." },
+            { question: "¿Qué son los planes de carrera?", answer: "Los planes de carrera son estrategias para avanzar profesionalmente a largo plazo." },
+            { question: "¿Qué significa proactividad?", answer: "La proactividad es anticiparse y actuar antes de que surjan problemas laborales." },
+            { question: "¿Qué es la rotación de tareas?", answer: "La rotación de tareas es cambiar roles entre empleados para aprender nuevas habilidades." },
+            { question: "¿Qué son las evaluaciones 360?", answer: "Las evaluaciones 360 son retroalimentaciones de colegas, superiores y subordinados." },
+            { question: "¿Qué significa empatía en el liderazgo?", answer: "La empatía en el liderazgo es entender las necesidades emocionales del equipo." },
+            { question: "¿Qué es la capacitación en seguridad?", answer: "La capacitación en seguridad enseña a los empleados a prevenir accidentes laborales." },
+            { question: "¿Qué son los incentivos laborales?", answer: "Los incentivos laborales son recompensas para motivar el desempeño de los empleados." },
+            { question: "¿Qué significa trabajo remoto?", answer: "El trabajo remoto es realizar tareas desde un lugar fuera de la oficina, como el hogar." },
+            { question: "¿Qué es la gestión del cambio?", answer: "La gestión del cambio es liderar transiciones organizacionales de forma efectiva." },
+            { question: "¿Qué son las políticas de igualdad?", answer: "Las políticas de igualdad promueven un trato justo sin discriminación en el trabajo." },
+            { question: "¿Qué significa inteligencia emocional?", answer: "La inteligencia emocional es reconocer y manejar las emociones propias y ajenas." },
+            { question: "¿Qué es la formación en liderazgo?", answer: "La formación en liderazgo desarrolla habilidades para guiar equipos efectivamente." },
+            { question: "¿Qué son las reuniones efectivas?", answer: "Las reuniones efectivas son sesiones organizadas para tomar decisiones y compartir ideas." },
+            { question: "¿Qué significa delegación efectiva?", answer: "La delegación efectiva es asignar tareas considerando las fortalezas del equipo." },
+            { question: "¿Qué es la capacitación virtual?", answer: "La capacitación virtual es el aprendizaje a través de plataformas digitales." },
+            { question: "¿Qué son los roles en un equipo?", answer: "Los roles en un equipo son las funciones específicas que cada miembro desempeña." },
+            { question: "¿Qué significa innovación tecnológica?", answer: "La innovación tecnológica es usar nuevas herramientas para mejorar procesos laborales." },
+            { question: "¿Qué es la rotación de personal?", answer: "La rotación de personal es mover empleados entre áreas para diversificar experiencia." },
+            { question: "¿Qué son las metas SMART?", answer: "Las metas SMART son específicas, medibles, alcanzables, relevantes y temporales." },
+            { question: "¿Qué significa trabajo colaborativo?", answer: "El trabajo colaborativo es unir esfuerzos para lograr un objetivo común." },
+            { question: "¿Qué es la gestión de riesgos?", answer: "La gestión de riesgos identifica y mitiga posibles problemas laborales." },
+            { question: "¿Qué son las habilidades interpersonales?", answer: "Las habilidades interpersonales son la capacidad de relacionarse eficazmente con otros." },
+            { question: "¿Qué significa liderazgo transformacional?", answer: "El liderazgo transformacional inspira cambios positivos en el equipo y la organización." },
+            { question: "¿Qué es la capacitación en equipo?", answer: "La capacitación en equipo es entrenar a un grupo para mejorar su desempeño colectivo." },
+            { question: "¿Qué son los planes de sucesión?", answer: "Los planes de sucesión preparan a empleados para reemplazar roles clave." },
+            { question: "¿Qué significa aprendizaje experiencial?", answer: "El aprendizaje experiencial es adquirir conocimientos a través de la práctica." },
+            { question: "¿Qué es la diversidad en el trabajo?", answer: "La diversidad en el trabajo incluye personas de diferentes culturas y experiencias." },
+            { question: "¿Qué son las técnicas de resolución de conflictos?", answer: "Las técnicas de resolución de conflictos buscan soluciones pacíficas entre partes." },
+            { question: "¿Qué significa trabajo en red?", answer: "El trabajo en red es colaborar con otros profesionales para compartir recursos." },
+            { question: "¿Qué es la evaluación de competencias?", answer: "La evaluación de competencias mide las habilidades de un empleado para un rol." },
+            { question: "¿Qué son las políticas de bienestar?", answer: "Las políticas de bienestar promueven la salud física y mental de los empleados." },
+            { question: "¿Qué significa liderazgo democrático?", answer: "El liderazgo democrático involucra a los miembros del equipo en las decisiones." },
+            { question: "¿Qué es la capacitación técnica?", answer: "La capacitación técnica enseña habilidades específicas como el uso de maquinaria o software." },
+            { question: "¿Qué son las metas individuales?", answer: "Las metas individuales son objetivos personales dentro del contexto laboral." },
+            { question: "¿Qué significa trabajo autónomo?", answer: "El trabajo autónomo es realizar tareas con mínima supervisión." },
+            { question: "¿Qué es la gestión de equipos?", answer: "La gestión de equipos organiza y dirige a los miembros para alcanzar metas." },
+            { question: "¿Qué son las herramientas de productividad?", answer: "Las herramientas de productividad son aplicaciones que optimizan el trabajo diario." },
+            { question: "¿Qué significa coaching laboral?", answer: "El coaching laboral es guiar a empleados para mejorar su desempeño." },
+            { question: "¿Qué es la rotación de liderazgo?", answer: "La rotación de liderazgo permite a diferentes miembros liderar el equipo." },
+            { question: "¿Qué son las políticas de teletrabajo?", answer: "Las políticas de teletrabajo regulan el trabajo remoto de los empleados." },
+            { question: "¿Qué significa aprendizaje autodirigido?", answer: "El aprendizaje autodirigido es cuando una persona toma la iniciativa de aprender." },
+            { question: "¿Qué es la evaluación de riesgos?", answer: "La evaluación de riesgos identifica peligros potenciales en el trabajo." },
+            { question: "¿Qué son las dinámicas de motivación?", answer: "Las dinámicas de motivación son actividades para inspirar a los empleados." },
+            { question: "¿Qué significa liderazgo autocrático?", answer: "El liderazgo autocrático implica tomar decisiones sin consultar al equipo." },
+            { question: "¿Qué es la capacitación en línea?", answer: "La capacitación en línea es el aprendizaje a través de cursos digitales." },
+            { question: "¿Qué son los planes de desarrollo?", answer: "Los planes de desarrollo son estrategias para mejorar las habilidades de un empleado." },
+            { question: "¿Qué significa trabajo interdisciplinario?", answer: "El trabajo interdisciplinario combina conocimientos de diferentes áreas." },
+            { question: "¿Qué es la gestión de conflictos?", answer: "La gestión de conflictos resuelve disputas dentro de un equipo laboral." },
+            { question: "¿Qué son las políticas de diversidad?", answer: "Las políticas de diversidad fomentan la inclusión de diferentes culturas." },
+            { question: "¿Qué significa liderazgo participativo?", answer: "El liderazgo participativo incluye al equipo en la toma de decisiones." },
+            { question: "¿Qué es la capacitación presencial?", answer: "La capacitación presencial es el entrenamiento realizado en un lugar físico." },
+            { question: "¿Qué son las metas organizacionales?", answer: "Las metas organizacionales son objetivos generales de una empresa." },
+            { question: "¿Qué significa trabajo en equipo virtual?", answer: "El trabajo en equipo virtual es colaborar a través de plataformas digitales." },
+            { question: "¿Qué es la gestión del estrés?", answer: "La gestión del estrés ayuda a los empleados a manejar presiones laborales." },
+            { question: "¿Qué son las técnicas de presentación?", answer: "Las técnicas de presentación son métodos para comunicar ideas efectivamente." },
+            { question: "¿Qué significa liderazgo carismático?", answer: "El liderazgo carismático inspira a través de la personalidad y carisma del líder." },
+            { question: "¿Qué es la capacitación en seguridad industrial?", answer: "La capacitación en seguridad industrial enseña a prevenir accidentes en fábricas." },
+            { question: "¿Qué son los planes de retención?", answer: "Los planes de retención son estrategias para mantener a los empleados en la empresa." },
+            { question: "¿Qué significa aprendizaje reflexivo?", answer: "El aprendizaje reflexivo es analizar experiencias para mejorar el conocimiento." },
+            { question: "¿Qué es la gestión de talento?", answer: "La gestión de talento identifica y desarrolla las fortalezas de los empleados." },
+            { question: "¿Qué son las políticas de conciliación?", answer: "Las políticas de conciliación equilibran trabajo y vida personal de los empleados." },
+            { question: "¿Qué significa liderazgo estratégico?", answer: "El liderazgo estratégico planifica a largo plazo para el éxito de la organización." },
+            { question: "¿Qué es la capacitación en comunicación?", answer: "La capacitación en comunicación mejora las habilidades de expresión y escucha." },
+            { question: "¿Qué son las metas de equipo?", answer: "Las metas de equipo son objetivos compartidos por todos los miembros del grupo." },
+            { question: "¿Qué significa trabajo sostenible?", answer: "El trabajo sostenible equilibra productividad y cuidado del medio ambiente." },
+            { question: "¿Qué es la gestión de la calidad?", answer: "La gestión de la calidad asegura que los productos o servicios cumplan estándares." },
+            { question: "¿Qué son las técnicas de brainstorming?", answer: "Las técnicas de brainstorming generan ideas en grupo de forma creativa." },
+            { question: "¿Qué significa liderazgo transaccional?", answer: "El liderazgo transaccional se basa en recompensas y castigos para motivar." },
+            { question: "¿Qué es la capacitación en liderazgo?", answer: "La capacitación en liderazgo desarrolla habilidades para dirigir equipos." },
+            { question: "¿Qué son los planes de mejora?", answer: "Los planes de mejora son estrategias para corregir debilidades laborales." },
+            { question: "¿Qué significa aprendizaje colaborativo virtual?", answer: "El aprendizaje colaborativo virtual es trabajar en equipo a través de plataformas digitales." },
+            { question: "¿Qué es la gestión de la innovación?", answer: "La gestión de la innovación implementa nuevas ideas en la organización." },
+            { question: "¿Qué son las políticas de seguridad?", answer: "Las políticas de seguridad protegen a los empleados de riesgos laborales." },
+            { question: "¿Qué significa liderazgo ético?", answer: "El liderazgo ético se basa en principios morales y transparencia." },
+            { question: "¿Qué es la capacitación en ventas?", answer: "La capacitación en ventas enseña técnicas para cerrar acuerdos comerciales." },
+            { question: "¿Qué son las metas de productividad?", answer: "Las metas de productividad miden la eficiencia en la realización de tareas." },
+            { question: "¿Qué significa trabajo en equipo interdisciplinario?", answer: "El trabajo en equipo interdisciplinario combina expertos de diferentes áreas." },
+            { question: "¿Qué es la gestión de recursos?", answer: "La gestión de recursos optimiza el uso de materiales y personal." },
+            { question: "¿Qué son las técnicas de coaching?", answer: "Las técnicas de coaching guían a empleados para alcanzar su potencial." },
+            { question: "¿Qué significa liderazgo adaptativo?", answer: "El liderazgo adaptativo se ajusta a los cambios del entorno laboral." },
+            { question: "¿Qué es la capacitación en idiomas?", answer: "La capacitación en idiomas mejora la comunicación en contextos multiculturales." },
+            { question: "¿Qué son los planes de motivación?", answer: "Los planes de motivación incentivan el desempeño de los empleados." },
+            { question: "¿Qué significa aprendizaje basado en proyectos?", answer: "El aprendizaje basado en proyectos resuelve problemas reales a través de tareas." },
+            { question: "¿Qué es la gestión de la diversidad?", answer: "La gestión de la diversidad integra a personas de distintos backgrounds." },
+            { question: "¿Qué son las políticas de flexibilidad?", answer: "Las políticas de flexibilidad permiten ajustar horarios o condiciones laborales." },
+            { question: "¿Qué significa liderazgo inspirador?", answer: "El liderazgo inspirador motiva al equipo con visión y entusiasmo." },
+            { question: "¿Qué es la capacitación en tecnología?", answer: "La capacitación en tecnología enseña el uso de herramientas digitales modernas." },
+            { question: "¿Qué son las metas de desarrollo?", answer: "Las metas de desarrollo buscan mejorar habilidades a largo plazo." },
+            { question: "¿Qué significa trabajo en equipo remoto?", answer: "El trabajo en equipo remoto colabora a distancia usando herramientas digitales." },
+            { question: "¿Qué es la gestión de la seguridad?", answer: "La gestión de la seguridad implementa medidas para proteger a los empleados." },
+            { question: "¿Qué son las técnicas de resolución de problemas?", answer: "Las técnicas de resolución de problemas identifican y solucionan desafíos laborales." },
+            { question: "¿Qué significa liderazgo servicial?", answer: "El liderazgo servicial prioriza las necesidades del equipo sobre las propias." },
+            { question: "¿Qué es la capacitación en gestión?", answer: "La capacitación en gestión desarrolla habilidades para liderar organizaciones." },
+            { question: "¿Qué son los planes de integración?", answer: "Los planes de integración facilitan la incorporación de nuevos empleados." },
+            { question: "¿Qué significa aprendizaje en el trabajo?", answer: "El aprendizaje en el trabajo ocurre mientras se realizan tareas diarias." },
+            { question: "¿Qué es la gestión de la calidad total?", answer: "La gestión de la calidad total mejora continuamente todos los procesos laborales." },
+            { question: "¿Qué son las políticas de sostenibilidad?", answer: "Las políticas de sostenibilidad promueven prácticas ecológicas en la empresa." },
+            { question: "¿Qué significa liderazgo visionario?", answer: "El liderazgo visionario establece metas ambiciosas para el futuro de la organización." },
+            { question: "¿Qué es la capacitación en servicio al cliente?", answer: "La capacitación en servicio al cliente mejora la atención a los usuarios." },
+            { question: "¿Qué son las metas de innovación?", answer: "Las metas de innovación buscan desarrollar nuevas soluciones laborales." },
+            { question: "¿Qué significa trabajo en equipo global?", answer: "El trabajo en equipo global colabora entre personas de diferentes países." },
+            { question: "¿Qué es la gestión de la reputación?", answer: "La gestión de la reputación protege la imagen de la empresa ante el público." },
+            { question: "¿Qué son las técnicas de liderazgo?", answer: "Las técnicas de liderazgo guían y motivan a los equipos efectivamente." },
+            { question: "¿Qué significa liderazgo inclusivo?", answer: "El liderazgo inclusivo valora y aprovecha la diversidad del equipo." },
+            { question: "¿Qué es la capacitación en ética?", answer: "La capacitación en ética enseña principios morales para el trabajo." },
+            { question: "¿Qué son los planes de bienestar laboral?", answer: "Los planes de bienestar laboral mejoran la salud de los empleados." },
+            { question: "¿Qué significa aprendizaje continuo?", answer: "El aprendizaje continuo es actualizar conocimientos a lo largo de la carrera." },
+            { question: "¿Qué es la gestión de la creatividad?", answer: "La gestión de la creatividad fomenta la generación de ideas innovadoras." },
+            { question: "¿Qué son las políticas de desarrollo?", answer: "Las políticas de desarrollo apoyan el crecimiento profesional de los empleados." },
+            { question: "¿Qué significa liderazgo colaborativo?", answer: "El liderazgo colaborativo trabaja junto al equipo en las decisiones." },
+            { question: "¿Qué es la capacitación en resiliencia?", answer: "La capacitación en resiliencia enseña a enfrentar desafíos laborales." },
+            { question: "¿Qué son las metas de sostenibilidad?", answer: "Las metas de sostenibilidad buscan un impacto positivo en el medio ambiente." },
+            { question: "¿Qué significa trabajo en equipo creativo?", answer: "El trabajo en equipo creativo genera soluciones originales en grupo." },
+            { question: "¿Qué es la gestión de la innovación tecnológica?", answer: "La gestión de la innovación tecnológica integra nuevas herramientas digitales." },
+            { question: "¿Qué son las técnicas de motivación laboral?", answer: "Las técnicas de motivación laboral incentivan el compromiso de los empleados." },
+            { question: "¿Qué significa liderazgo transformador?", answer: "El liderazgo transformador cambia la cultura organizacional positivamente." },
+            { question: "¿Qué es la capacitación en diversidad?", answer: "La capacitación en diversidad promueve la inclusión en el trabajo." },
+            { question: "¿Qué son los planes de liderazgo?", answer: "Los planes de liderazgo preparan a empleados para roles de dirección." },
+            { question: "¿Qué significa aprendizaje basado en competencias?", answer: "El aprendizaje basado en competencias desarrolla habilidades específicas." },
+            { question: "¿Qué es la gestión de la seguridad laboral?", answer: "La gestión de la seguridad laboral previene accidentes en el trabajo." }
         ];
 
         let currentCardIndex = 0;
-        let isFlipped = false;
+        let trophies = parseInt(localStorage.getItem('trophies')) || 0;
+        let currentMode = 'solo';
+        let timeLeft = 30;
+        let timerInterval;
+        let cardsCompleted = 0;
+        let totalTime = 0;
+        let startTime;
+        let playerName = '';
+        let opponentTrophies = 0;
+        let machineTrophies = 0;
 
-        function displayCard() {
-            const card = flashcards[currentCardIndex];
-            document.getElementById('question').innerHTML = card.question;
-            document.getElementById('answer').innerHTML = card.answer;
-            document.getElementById('card-index').textContent = currentCardIndex + 1;
-            document.getElementById('total-cards').textContent = flashcards.length;
-            if (!isFlipped) {
-                document.getElementById('card').classList.remove('flipped');
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+        const showAnswerButton = document.getElementById('showAnswer');
+        const nextCardButton = document.getElementById('nextCard');
+        const prevCardButton = document.getElementById('prevCard');
+        const shuffleButton = document.getElementById('shuffleCards');
+        const modeSoloButton = document.getElementById('modeSolo');
+        const modeDueloButton = document.getElementById('modeDuelo');
+        const modeVsMachineButton = document.getElementById('modeVsMachine');
+        const sendResultsButton = document.getElementById('sendResults');
+        const progressFill = document.getElementById('progressFill');
+        const trophyCountElement = document.getElementById('trophyCount');
+        const trophyIcon = document.getElementById('trophyIcon');
+        const timerElement = document.getElementById('timer');
+        const resultsElement = document.getElementById('results');
+        const successSound = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+        const milestoneSound = new Audio('https://www.soundjay.com/mechanical/click-01.mp3'); // Sonido de máquina
+
+        function updateCard() {
+            questionElement.textContent = flashcards[currentCardIndex].question;
+            answerElement.textContent = flashcards[currentCardIndex].answer;
+            answerElement.style.display = 'none';
+            showAnswerButton.textContent = 'Mostrar Respuesta';
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = ((currentCardIndex + 1) / flashcards.length) * 100;
+            progressFill.style.width = `${progress}%`;
+        }
+
+        function showAnswer() {
+            if (answerElement.style.display === 'none') {
+                answerElement.style.display = 'block';
+                showAnswerButton.textContent = 'Ocultar Respuesta';
+                successSound.play().catch(() => console.log('Audio no soportado'));
+                trophies++;
+                cardsCompleted++;
+                totalTime += 30 - timeLeft;
+                localStorage.setItem('trophies', trophies);
+                trophyCountElement.textContent = trophies;
+                if (trophies % 10 === 0) {
+                    trophyIcon.style.display = 'block';
+                    milestoneSound.play().catch(() => console.log('Audio no soportado'));
+                    setTimeout(() => trophyIcon.style.display = 'none', 2000);
+                }
+                if (currentMode === 'duelo' || currentMode === 'vsMachine') {
+                    checkGameEnd();
+                }
+            } else {
+                answerElement.style.display = 'none';
+                showAnswerButton.textContent = 'Mostrar Respuesta';
             }
         }
 
-        function flipCard() {
-            isFlipped = !isFlipped;
-            document.getElementById('card').classList.toggle('flipped');
-        }
-
         function nextCard() {
-            isFlipped = false;
             currentCardIndex = (currentCardIndex + 1) % flashcards.length;
-            displayCard();
+            updateCard();
+            if (currentMode !== 'solo') {
+                timeLeft = 30;
+            }
         }
 
         function prevCard() {
-            isFlipped = false;
             currentCardIndex = (currentCardIndex - 1 + flashcards.length) % flashcards.length;
-            displayCard();
+            updateCard();
+            if (currentMode !== 'solo') {
+                timeLeft = 30;
+            }
         }
 
         function shuffleCards() {
@@ -707,12 +435,90 @@
                 [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
             }
             currentCardIndex = 0;
-            isFlipped = false;
-            displayCard();
+            updateCard();
         }
 
-        displayCard();
-        document.getElementById('card').addEventListener('click', flipCard);
+        function startMode(mode) {
+            currentMode = mode;
+            cardsCompleted = 0;
+            totalTime = 0;
+            timeLeft = 30;
+            clearInterval(timerInterval);
+            timerElement.style.display = mode === 'solo' ? 'none' : 'block';
+            if (mode !== 'solo') {
+                playerName = prompt('Ingresa tu nombre:') || 'Operario Anónimo';
+                if (mode === 'duelo') {
+                    opponentTrophies = parseInt(localStorage.getItem('opponentTrophies')) || 0;
+                    localStorage.setItem('opponentTrophies', trophies);
+                } else if (mode === 'vsMachine') {
+                    machineTrophies = Math.floor(Math.random() * 6) + 5; // Máquina responde entre 5 y 10 tarjetas
+                }
+                startTime = new Date();
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerElement.textContent = `Tiempo restante: ${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        nextCard();
+                        timeLeft = 30;
+                    }
+                }, 1000);
+                setTimeout(checkGameEnd, 300000); // 5 minutos
+            }
+            updateModeButtons();
+        }
+
+        function updateModeButtons() {
+            modeSoloButton.style.background = currentMode === 'solo' ? '#6c757d' : '#dc3545';
+            modeDueloButton.style.background = currentMode === 'duelo' ? '#6c757d' : '#dc3545';
+            modeVsMachineButton.style.background = currentMode === 'vsMachine' ? '#6c757d' : '#dc3545';
+        }
+
+        function checkGameEnd() {
+            if (currentMode === 'solo') return;
+            clearInterval(timerInterval);
+            timerElement.style.display = 'none';
+            let result = `Fin del juego (${currentMode === 'duelo' ? 'Duelo' : 'Vs. Máquina'})\n`;
+            if (currentMode === 'duelo') {
+                result += `Tú (${playerName}): ${trophies} trofeos\nOponente: ${opponentTrophies} trofeos\n`;
+                result += trophies > opponentTrophies ? '¡Ganaste!' : trophies < opponentTrophies ? 'Perdiste.' : 'Empate.';
+            } else {
+                result += `Tú (${playerName}): ${trophies} trofeos\nMáquina: ${machineTrophies} trofeos\n`;
+                result += trophies > machineTrophies ? '¡Ganaste!' : trophies < machineTrophies ? 'Perdiste.' : 'Empate.';
+            }
+            alert(result);
+            currentMode = 'solo';
+            updateModeButtons();
+        }
+
+        function sendResults() {
+            const now = new Date();
+            const averageTime = cardsCompleted ? (totalTime / cardsCompleted).toFixed(1) : 0;
+            let message = `Asunto: Resultados de Capacitación del Personal - ${playerName || 'Operario Anónimo'}\n\n`;
+            message += `Estimado Prof. Rodolfo Cabral,\n\n`;
+            message += `Soy ${playerName || 'Operario Anónimo'}. He completado un desafío en "Tarjetas de estudio. Capacitación del Personal" el ${now.toLocaleDateString()} a las ${now.toLocaleTimeString()}.\n\n`;
+            message += `Detalles:\n`;
+            message += `- Modo: ${currentMode === 'solo' ? 'Solo' : currentMode === 'duelo' ? 'Duelo' : 'Vs. Máquina'}\n`;
+            if (currentMode === 'duelo') message += `- Trofeos del oponente: ${opponentTrophies}\n`;
+            if (currentMode === 'vsMachine') message += `- Trofeos de la máquina: ${machineTrophies}\n`;
+            message += `- Trofeos ganados: ${trophies}\n`;
+            message += `- Tarjetas completadas: ${cardsCompleted}/${flashcards.length}\n`;
+            message += `- Tiempo promedio por tarjeta: ${averageTime} segundos\n\n`;
+            message += `¡Espero seguir mejorando!\n\nSaludos,\n${playerName || 'Operario Anónimo'}`;
+            resultsElement.value = message;
+            alert('El informe está listo en el área de texto. Selecciona el texto (mantén presionado o usa Ctrl+A), cópialo (Ctrl+C o clic derecho > Copiar), y pégalo en un correo o Classroom para el Prof. Rodolfo.');
+        }
+
+        showAnswerButton.addEventListener('click', showAnswer);
+        nextCardButton.addEventListener('click', nextCard);
+        prevCardButton.addEventListener('click', prevCard);
+        shuffleButton.addEventListener('click', shuffleCards);
+        modeSoloButton.addEventListener('click', () => startMode('solo'));
+        modeDueloButton.addEventListener('click', () => startMode('duelo'));
+        modeVsMachineButton.addEventListener('click', () => startMode('vsMachine'));
+        sendResultsButton.addEventListener('click', sendResults);
+
+        trophyCountElement.textContent = trophies;
+        updateCard();
     </script>
 </body>
 </html>
