@@ -30,24 +30,20 @@
         }
         h1 { color: #3a5d7d; font-size: 24px; margin-bottom: 10px; }
         .glossary-link {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             margin-bottom: 15px;
             font-size: 24px;
             cursor: pointer;
             animation: pulse 1.5s infinite;
-            position: relative;
         }
-        .glossary-link:hover::after {
-            content: "Consultar Glosario";
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
+        .glossary-label {
             background: #3a5d7d;
             color: #fff;
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 12px;
+            margin-left: 5px;
             white-space: nowrap;
         }
         @keyframes pulse {
@@ -82,7 +78,9 @@
 <body>
     <div class="container">
         <h1>🏭 Fábrica de Conocimiento: Capacitación del Personal</h1>
-        <a href="https://drive.google.com/file/d/1BJ_ujQ1w3VTMbe_v4APPoY1RWxzeKrkY/view?usp=sharing" target="_blank" class="glossary-link" title="Consultar Glosario">📖</a>
+        <a href="https://drive.google.com/file/d/1BJ_ujQ1w3VTMbe_v4APPoY1RWxzeKrkY/view?usp=sharing" target="_blank" class="glossary-link" title="Consultar Glosario">
+            📖 <span class="glossary-label">Consultar Glosario</span>
+        </a>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
