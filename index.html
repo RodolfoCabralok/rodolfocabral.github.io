@@ -84,21 +84,21 @@
         #shuffleCards { background: #ff9500; color: #fff; font-size: 20px; }
         #modeSolo, #modeDuelo { background: #dc3545; color: #fff; }
         #timer { font-size: 16px; color: #dc3545; margin-top: 10px; display: none; }
-        #results { margin-top: 20px; width: 100%; height: 150px; font-family: 'Poppins', sans-serif; font-size: 14px; color: #3a5d7d; border-radius: 5px; }
+        #results { margin-top: 20px; width: 100%; height: 150px; font-family: 'Poppins', sans-serif; font-size: 14px; color: #3a5d7d; border-radius: 5px; padding: 5px; }
         footer { margin-top: 20px; color: #3a5d7d; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🏭 Fábrica de Conocimiento: Capacitación del Personal</h1>
-        <a href="https://drive.google.com/file/d/1BJ_ujQ1w3VTMbe_v4aIjPoY1RWxzeKrkY/view?usp=sharing" target="_blank" class="glossary-link" title="Consultar">
+        <a href="https://drive.google.com/file/d/1BJ_ujQ1w3VTMbe_v4APPoY1RWxzeKrkY/view?usp=sharing" target="_blank" class="glossary-link" title="Consultar Glosario">
             📖 <span class="glossary-label">Consultar Glosario</span>
         </a>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
         <div class="card" id="card">
-            <div class="card-text" id="cardText>
+            <div class="card-text" id="question"></div>
             <div class="options" id="options"></div>
             <div class="answer" id="answer"></div>
         </div>
@@ -107,12 +107,12 @@
         <div class="trophy" id="trophyIcon">🏆 ¡Meta alcanzada!</div>
         <div id="timer"></div>
         <div class="button-container">
-            <button type="button" id="nextCard">Siguiente</button>
-            <button type="button" id="prevCard">Anterior</button>
-            <button type="button" id="shuffleCards">↬ Barajar</button>
-            <button type="button" id="modeSolo">Modo Solo</button>
-            <button type="button" id="modeDuelo">Duelo (2 Jugadores)</button>
-            <button type="button" id="sendResults">Enviar Resultados al Docente</button>
+            <button id="nextCard">Siguiente</button>
+            <button id="prevCard">Anterior</button>
+            <button id="shuffleCards">↬ Barajar</button>
+            <button id="modeSolo">Modo Solo</button>
+            <button id="modeDuelo">Duelo (2 Jugadores)</button>
+            <button id="sendResults">Enviar Resultados al Docente</button>
         </div>
         <textarea id="results" readonly placeholder="Aquí aparecerán tus resultados para copiar y enviar al docente."></textarea>
         <footer>Creado por Prof. Rodolfo Cabral</footer>
@@ -134,11 +134,655 @@
                 { text: "Estrategias para memorizar sin entender.", correct: false },
                 { text: "Juegos sin propósito educativo.", correct: false }
             ] },
-            // ... (las otras 144 tarjetas con opciones, abreviadas aquí por longitud)
             { question: "¿Qué es la gestión de la seguridad laboral?", answer: "Prevenir accidentes en el trabajo.", options: [
                 { text: "Prevenir accidentes en el trabajo.", correct: true },
                 { text: "Ignorar la seguridad del equipo.", correct: false },
                 { text: "Evitar prevenir accidentes.", correct: false }
+            ] },
+            { question: "¿Qué es un plan de capacitación?", answer: "Estrategia para mejorar habilidades.", options: [
+                { text: "Estrategia para mejorar habilidades.", correct: true },
+                { text: "Un plan para reducir el personal.", correct: false },
+                { text: "Un documento sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué significa ergonomía?", answer: "Diseño para la comodidad laboral.", options: [
+                { text: "Diseño para la comodidad laboral.", correct: true },
+                { text: "Un tipo de maquinaria industrial.", correct: false },
+                { text: "Un método de marketing.", correct: false }
+            ] },
+            { question: "¿Qué es la motivación laboral?", answer: "Incentivo para el desempeño.", options: [
+                { text: "Incentivo para el desempeño.", correct: true },
+                { text: "Un castigo por bajo rendimiento.", correct: false },
+                { text: "Un horario de trabajo rígido.", correct: false }
+            ] },
+            { question: "¿Qué es un indicador de desempeño?", answer: "Mide el rendimiento laboral.", options: [
+                { text: "Mide el rendimiento laboral.", correct: true },
+                { text: "Un tipo de maquinaria.", correct: false },
+                { text: "Un informe sin datos.", correct: false }
+            ] },
+            { question: "¿Qué es la cultura organizacional?", answer: "Valores y normas de la empresa.", options: [
+                { text: "Valores y normas de la empresa.", correct: true },
+                { text: "Un plan de marketing.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la comunicación efectiva?", answer: "Transmisión clara de ideas.", options: [
+                { text: "Transmisión clara de ideas.", correct: true },
+                { text: "Evitar hablar con el equipo.", correct: false },
+                { text: "Enviar mensajes sin contexto.", correct: false }
+            ] },
+            { question: "¿Qué es un equipo de alto rendimiento?", answer: "Grupo eficiente y coordinado.", options: [
+                { text: "Grupo eficiente y coordinado.", correct: true },
+                { text: "Un grupo sin objetivos.", correct: false },
+                { text: "Un equipo competitivo sin colaboración.", correct: false }
+            ] },
+            { question: "¿Qué es el liderazgo transformacional?", answer: "Inspirar cambios positivos.", options: [
+                { text: "Inspirar cambios positivos.", correct: true },
+                { text: "Imponer reglas sin flexibilidad.", correct: false },
+                { text: "Evitar la comunicación con el equipo.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión del cambio?", answer: "Adaptarse a nuevas condiciones.", options: [
+                { text: "Adaptarse a nuevas condiciones.", correct: true },
+                { text: "Mantener todo igual siempre.", correct: false },
+                { text: "Ignorar las necesidades del equipo.", correct: false }
+            ] },
+            { question: "¿Qué es el aprendizaje experiencial?", answer: "Aprender mediante la práctica.", options: [
+                { text: "Aprender mediante la práctica.", correct: true },
+                { text: "Memorizar teorías sin aplicarlas.", correct: false },
+                { text: "Evitar interactuar con otros.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación continua?", answer: "Formación constante del personal.", options: [
+                { text: "Formación constante del personal.", correct: true },
+                { text: "Un curso único al año.", correct: false },
+                { text: "Evitar el aprendizaje.", correct: false }
+            ] },
+            { question: "¿Qué es un análisis de necesidades?", answer: "Identificar carencias formativas.", options: [
+                { text: "Identificar carencias formativas.", correct: true },
+                { text: "Un informe financiero.", correct: false },
+                { text: "Un plan de marketing.", correct: false }
+            ] },
+            { question: "¿Qué es la retroalimentación constructiva?", answer: "Comentarios para mejorar.", options: [
+                { text: "Comentarios para mejorar.", correct: true },
+                { text: "Críticas sin soluciones.", correct: false },
+                { text: "Elogios sin fundamento.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión del tiempo?", answer: "Organizar tareas eficazmente.", options: [
+                { text: "Organizar tareas eficazmente.", correct: true },
+                { text: "Dejar todo para última hora.", correct: false },
+                { text: "Ignorar las prioridades.", correct: false }
+            ] },
+            { question: "¿Qué es la inteligencia emocional?", answer: "Gestionar emociones propias y ajenas.", options: [
+                { text: "Gestionar emociones propias y ajenas.", correct: true },
+                { text: "Ignorar los sentimientos del equipo.", correct: false },
+                { text: "Evitar la empatía.", correct: false }
+            ] },
+            { question: "¿Qué es un plan de acción?", answer: "Pasos para alcanzar un objetivo.", options: [
+                { text: "Pasos para alcanzar un objetivo.", correct: true },
+                { text: "Un documento sin metas.", correct: false },
+                { text: "Un informe financiero.", correct: false }
+            ] },
+            { question: "¿Qué es la seguridad industrial?", answer: "Proteger al personal de riesgos.", options: [
+                { text: "Proteger al personal de riesgos.", correct: true },
+                { text: "Ignorar los protocolos de seguridad.", correct: false },
+                { text: "Evitar el uso de equipos de protección.", correct: false }
+            ] },
+            { question: "¿Qué es el trabajo en equipo?", answer: "Colaborar para lograr metas.", options: [
+                { text: "Colaborar para lograr metas.", correct: true },
+                { text: "Trabajar solo sin ayuda.", correct: false },
+                { text: "Competir contra los compañeros.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación técnica?", answer: "Enseñar habilidades específicas.", options: [
+                { text: "Enseñar habilidades específicas.", correct: true },
+                { text: "Un curso teórico sin práctica.", correct: false },
+                { text: "Un programa sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la evaluación del desempeño?", answer: "Medir resultados laborales.", options: [
+                { text: "Medir resultados laborales.", correct: true },
+                { text: "Ignorar el esfuerzo del personal.", correct: false },
+                { text: "Un informe sin datos específicos.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión por competencias?", answer: "Desarrollo basado en habilidades.", options: [
+                { text: "Desarrollo basado en habilidades.", correct: true },
+                { text: "Un sistema de sanciones.", correct: false },
+                { text: "Un plan sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es el empowerment?", answer: "Dar autonomía al personal.", options: [
+                { text: "Dar autonomía al personal.", correct: true },
+                { text: "Controlar todas las decisiones.", correct: false },
+                { text: "Evitar delegar responsabilidades.", correct: false }
+            ] },
+            { question: "¿Qué es la resolución de conflictos?", answer: "Solucionar problemas entre partes.", options: [
+                { text: "Solucionar problemas entre partes.", correct: true },
+                { text: "Ignorar los desacuerdos.", correct: false },
+                { text: "Evitar la comunicación.", correct: false }
+            ] },
+            { question: "¿Qué es un ambiente laboral saludable?", answer: "Espacio que promueve bienestar.", options: [
+                { text: "Espacio que promueve bienestar.", correct: true },
+                { text: "Un lugar con alta presión.", correct: false },
+                { text: "Un entorno sin normas.", correct: false }
+            ] },
+            { question: "¿Qué es la formación profesional?", answer: "Preparación para el trabajo.", options: [
+                { text: "Preparación para el trabajo.", correct: true },
+                { text: "Un curso sin objetivos claros.", correct: false },
+                { text: "Un programa de ocio.", correct: false }
+            ] },
+            { question: "¿Qué es la productividad laboral?", answer: "Eficiencia en las tareas.", options: [
+                { text: "Eficiencia en las tareas.", correct: true },
+                { text: "Trabajar sin descanso.", correct: false },
+                { text: "Ignorar los objetivos.", correct: false }
+            ] },
+            { question: "¿Qué es el desarrollo organizacional?", answer: "Mejorar la estructura de la empresa.", options: [
+                { text: "Mejorar la estructura de la empresa.", correct: true },
+                { text: "Mantener todo sin cambios.", correct: false },
+                { text: "Un plan de marketing.", correct: false }
+            ] },
+            { question: "¿Qué es la ética laboral?", answer: "Principios morales en el trabajo.", options: [
+                { text: "Principios morales en el trabajo.", correct: true },
+                { text: "Ignorar las normas de la empresa.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la innovación en el trabajo?", answer: "Introducir nuevas ideas.", options: [
+                { text: "Introducir nuevas ideas.", correct: true },
+                { text: "Mantener métodos antiguos.", correct: false },
+                { text: "Evitar los cambios.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión del conocimiento?", answer: "Organizar información útil.", options: [
+                { text: "Organizar información útil.", correct: true },
+                { text: "Ignorar los datos disponibles.", correct: false },
+                { text: "Un plan sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es el clima organizacional?", answer: "Ambiente percibido por el personal.", options: [
+                { text: "Ambiente percibido por el personal.", correct: true },
+                { text: "Un informe financiero.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la planificación estratégica?", answer: "Definir objetivos a largo plazo.", options: [
+                { text: "Definir objetivos a largo plazo.", correct: true },
+                { text: "Un plan sin metas claras.", correct: false },
+                { text: "Ignorar el futuro de la empresa.", correct: false }
+            ] },
+            { question: "¿Qué es la delegación de tareas?", answer: "Asignar responsabilidades al equipo.", options: [
+                { text: "Asignar responsabilidades al equipo.", correct: true },
+                { text: "Hacer todo uno mismo.", correct: false },
+                { text: "Evitar la colaboración.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en seguridad?", answer: "Enseñar normas de prevención.", options: [
+                { text: "Enseñar normas de prevención.", correct: true },
+                { text: "Ignorar los riesgos laborales.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es un sistema de gestión?", answer: "Estructura para dirigir procesos.", options: [
+                { text: "Estructura para dirigir procesos.", correct: true },
+                { text: "Un plan sin organización.", correct: false },
+                { text: "Un informe financiero.", correct: false }
+            ] },
+            { question: "¿Qué es la calidad en el trabajo?", answer: "Cumplir estándares de excelencia.", options: [
+                { text: "Cumplir estándares de excelencia.", correct: true },
+                { text: "Ignorar los errores.", correct: false },
+                { text: "Trabajar sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es un objetivo SMART?", answer: "Meta específica y medible.", options: [
+                { text: "Meta específica y medible.", correct: true },
+                { text: "Un objetivo sin plazos.", correct: false },
+                { text: "Un plan sin dirección.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de riesgos?", answer: "Identificar y mitigar peligros.", options: [
+                { text: "Identificar y mitigar peligros.", correct: true },
+                { text: "Ignorar los problemas potenciales.", correct: false },
+                { text: "Un plan sin prevención.", correct: false }
+            ] },
+            { question: "¿Qué es el aprendizaje autónomo?", answer: "Aprender de forma independiente.", options: [
+                { text: "Aprender de forma independiente.", correct: true },
+                { text: "Depender siempre de un instructor.", correct: false },
+                { text: "Evitar el estudio.", correct: false }
+            ] },
+            { question: "¿Qué es un mentor laboral?", answer: "Guía para el desarrollo profesional.", options: [
+                { text: "Guía para el desarrollo profesional.", correct: true },
+                { text: "Un supervisor que sanciona.", correct: false },
+                { text: "Un compañero sin experiencia.", correct: false }
+            ] },
+            { question: "¿Qué es la rotación laboral?", answer: "Cambio frecuente de empleados.", options: [
+                { text: "Cambio frecuente de empleados.", correct: true },
+                { text: "Mantener al personal fijo.", correct: false },
+                { text: "Un plan de capacitación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación cruzada?", answer: "Enseñar múltiples habilidades.", options: [
+                { text: "Enseñar múltiples habilidades.", correct: true },
+                { text: "Limitar al personal a una tarea.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es un sistema de incentivos?", answer: "Premiar el buen desempeño.", options: [
+                { text: "Premiar el buen desempeño.", correct: true },
+                { text: "Sancionar a los empleados.", correct: false },
+                { text: "Ignorar los logros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de proyectos?", answer: "Coordinar tareas para un objetivo.", options: [
+                { text: "Coordinar tareas para un objetivo.", correct: true },
+                { text: "Un plan sin dirección clara.", correct: false },
+                { text: "Ignorar los plazos.", correct: false }
+            ] },
+            { question: "¿Qué es un análisis FODA?", answer: "Evaluar fortalezas y debilidades.", options: [
+                { text: "Evaluar fortalezas y debilidades.", correct: true },
+                { text: "Un informe financiero.", correct: false },
+                { text: "Un plan de marketing sin datos.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en liderazgo?", answer: "Desarrollar habilidades de dirección.", options: [
+                { text: "Desarrollar habilidades de dirección.", correct: true },
+                { text: "Un curso sin objetivos claros.", correct: false },
+                { text: "Ignorar las habilidades sociales.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión del talento?", answer: "Aprovechar habilidades del personal.", options: [
+                { text: "Aprovechar habilidades del personal.", correct: true },
+                { text: "Ignorar las capacidades del equipo.", correct: false },
+                { text: "Un sistema de trabajo.", correct: false }
+            ] },
+            { question: "¿Qué es un plan de desarrollo?", answer: "Estrategia para el crecimiento.", options: [
+                { text: "Estrategia para el crecimiento.", correct: true },
+                { text: "Un plan sin metas claras.", correct: false },
+                { text: "Un informe financiero.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en equipo?", answer: "Mejorar la colaboración grupal.", options: [
+                { text: "Mejorar la colaboración grupal.", correct: true },
+                { text: "Trabajar de forma individual.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de recursos?", answer: "Administrar materiales y personal.", options: [
+                { text: "Administrar materiales y personal.", correct: true },
+                { text: "Ignorar los recursos disponibles.", correct: false },
+                { text: "Un plan sin organización.", correct: false }
+            ] },
+            { question: "¿Qué es el desarrollo sostenible?", answer: "Proteger el medio ambiente laboral.", options: [
+                { text: "Proteger el medio ambiente laboral.", correct: true },
+                { text: "Ignorar el impacto ambiental.", correct: false },
+                { text: "Un plan de marketing.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación operativa?", answer: "Enseñar procesos específicos.", options: [
+                { text: "Enseñar procesos específicos.", correct: true },
+                { text: "Un curso teórico sin práctica.", correct: false },
+                { text: "Ignorar los procedimientos.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la calidad?", answer: "Garantizar estándares altos.", options: [
+                { text: "Garantizar estándares altos.", correct: true },
+                { text: "Ignorar los errores.", correct: false },
+                { text: "Un plan sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en valores?", answer: "Promover principios éticos.", options: [
+                { text: "Promover principios éticos.", correct: true },
+                { text: "Ignorar la ética laboral.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de crisis?", answer: "Resolver problemas urgentes.", options: [
+                { text: "Resolver problemas urgentes.", correct: true },
+                { text: "Ignorar las emergencias.", correct: false },
+                { text: "Un plan sin preparación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en habilidades blandas?", answer: "Desarrollar competencias sociales.", options: [
+                { text: "Desarrollar competencias sociales.", correct: true },
+                { text: "Un curso técnico sin interacción.", correct: false },
+                { text: "Ignorar la comunicación.", correct: false }
+            ] },
+            { question: "¿Qué es un sistema de evaluación?", answer: "Medir el progreso laboral.", options: [
+                { text: "Medir el progreso laboral.", correct: true },
+                { text: "Ignorar los resultados.", correct: false },
+                { text: "Un informe sin datos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la diversidad?", answer: "Incluir diferentes perspectivas.", options: [
+                { text: "Incluir diferentes perspectivas.", correct: true },
+                { text: "Ignorar las diferencias culturales.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación virtual?", answer: "Enseñanza a través de plataformas digitales.", options: [
+                { text: "Enseñanza a través de plataformas digitales.", correct: true },
+                { text: "Un curso presencial obligatorio.", correct: false },
+                { text: "Ignorar la tecnología.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión del estrés?", answer: "Controlar la presión laboral.", options: [
+                { text: "Controlar la presión laboral.", correct: true },
+                { text: "Ignorar el bienestar del personal.", correct: false },
+                { text: "Un plan sin soluciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en competencias digitales?", answer: "Enseñar uso de tecnología.", options: [
+                { text: "Enseñar uso de tecnología.", correct: true },
+                { text: "Un curso sin herramientas digitales.", correct: false },
+                { text: "Ignorar la innovación.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la innovación?", answer: "Fomentar nuevas ideas.", options: [
+                { text: "Fomentar nuevas ideas.", correct: true },
+                { text: "Mantener métodos antiguos.", correct: false },
+                { text: "Un plan sin creatividad.", correct: false }
+            ] },
+            { question: "¿Qué es un plan de contingencia?", answer: "Estrategia para emergencias.", options: [
+                { text: "Estrategia para emergencias.", correct: true },
+                { text: "Un plan sin preparación.", correct: false },
+                { text: "Ignorar los riesgos.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en resolución de problemas?", answer: "Enseñar a superar obstáculos.", options: [
+                { text: "Enseñar a superar obstáculos.", correct: true },
+                { text: "Ignorar los problemas.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la comunicación?", answer: "Facilitar el intercambio de ideas.", options: [
+                { text: "Facilitar el intercambio de ideas.", correct: true },
+                { text: "Evitar la interacción.", correct: false },
+                { text: "Un plan sin claridad.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en atención al cliente?", answer: "Mejorar el trato con usuarios.", options: [
+                { text: "Mejorar el trato con usuarios.", correct: true },
+                { text: "Ignorar las quejas.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión del desempeño?", answer: "Evaluar y mejorar resultados.", options: [
+                { text: "Evaluar y mejorar resultados.", correct: true },
+                { text: "Ignorar el progreso del personal.", correct: false },
+                { text: "Un sistema sin métricas.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en negociación?", answer: "Enseñar a llegar a acuerdos.", options: [
+                { text: "Enseñar a llegar a acuerdos.", correct: true },
+                { text: "Evitar el diálogo.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la sostenibilidad?", answer: "Proteger recursos a largo plazo.", options: [
+                { text: "Proteger recursos a largo plazo.", correct: true },
+                { text: "Ignorar el impacto ambiental.", correct: false },
+                { text: "Un plan sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en primeros auxilios?", answer: "Enseñar a responder a emergencias.", options: [
+                { text: "Enseñar a responder a emergencias.", correct: true },
+                { text: "Ignorar las emergencias.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la confianza?", answer: "Fomentar relaciones laborales sólidas.", options: [
+                { text: "Fomentar relaciones laborales sólidas.", correct: true },
+                { text: "Ignorar la comunicación.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión del tiempo?", answer: "Enseñar a priorizar tareas.", options: [
+                { text: "Enseñar a priorizar tareas.", correct: true },
+                { text: "Ignorar las prioridades.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la empatía?", answer: "Comprender las emociones del equipo.", options: [
+                { text: "Comprender las emociones del equipo.", correct: true },
+                { text: "Ignorar los sentimientos.", correct: false },
+                { text: "Un sistema sin comunicación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en ventas?", answer: "Mejorar técnicas de persuasión.", options: [
+                { text: "Mejorar técnicas de persuasión.", correct: true },
+                { text: "Ignorar a los clientes.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la colaboración?", answer: "Fomentar el trabajo en equipo.", options: [
+                { text: "Fomentar el trabajo en equipo.", correct: true },
+                { text: "Evitar la interacción.", correct: false },
+                { text: "Un plan sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en adaptabilidad?", answer: "Enseñar a ajustarse a cambios.", options: [
+                { text: "Enseñar a ajustarse a cambios.", correct: true },
+                { text: "Mantenerse rígido ante cambios.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la transparencia?", answer: "Promover la honestidad laboral.", options: [
+                { text: "Promover la honestidad laboral.", correct: true },
+                { text: "Ocultar información al equipo.", correct: false },
+                { text: "Un sistema sin comunicación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en creatividad?", answer: "Fomentar el pensamiento innovador.", options: [
+                { text: "Fomentar el pensamiento innovador.", correct: true },
+                { text: "Limitar las ideas nuevas.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la motivación?", answer: "Inspirar al personal a dar lo mejor.", options: [
+                { text: "Inspirar al personal a dar lo mejor.", correct: true },
+                { text: "Ignorar el esfuerzo del equipo.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en ética?", answer: "Promover valores en el trabajo.", options: [
+                { text: "Promover valores en el trabajo.", correct: true },
+                { text: "Ignorar los principios morales.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la resiliencia?", answer: "Fomentar la recuperación ante problemas.", options: [
+                { text: "Fomentar la recuperación ante problemas.", correct: true },
+                { text: "Ignorar los desafíos.", correct: false },
+                { text: "Un plan sin soluciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en toma de decisiones?", answer: "Enseñar a elegir la mejor opción.", options: [
+                { text: "Enseñar a elegir la mejor opción.", correct: true },
+                { text: "Evitar tomar decisiones.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la lealtad?", answer: "Fomentar compromiso con la empresa.", options: [
+                { text: "Fomentar compromiso con la empresa.", correct: true },
+                { text: "Ignorar la fidelidad del personal.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de conflictos?", answer: "Enseñar a resolver disputas.", options: [
+                { text: "Enseñar a resolver disputas.", correct: true },
+                { text: "Ignorar los desacuerdos.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la eficiencia?", answer: "Optimizar los recursos disponibles.", options: [
+                { text: "Optimizar los recursos disponibles.", correct: true },
+                { text: "Desperdiciar recursos.", correct: false },
+                { text: "Un plan sin organización.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en comunicación asertiva?", answer: "Enseñar a expresarse con claridad.", options: [
+                { text: "Enseñar a expresarse con claridad.", correct: true },
+                { text: "Evitar la comunicación directa.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la flexibilidad?", answer: "Adaptarse a las circunstancias.", options: [
+                { text: "Adaptarse a las circunstancias.", correct: true },
+                { text: "Mantenerse rígido siempre.", correct: false },
+                { text: "Un plan sin ajustes.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en trabajo bajo presión?", answer: "Enseñar a manejar estrés laboral.", options: [
+                { text: "Enseñar a manejar estrés laboral.", correct: true },
+                { text: "Ignorar la presión.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la proactividad?", answer: "Fomentar la iniciativa propia.", options: [
+                { text: "Fomentar la iniciativa propia.", correct: true },
+                { text: "Esperar instrucciones siempre.", correct: false },
+                { text: "Un sistema sin autonomía.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en planificación?", answer: "Enseñar a organizar tareas.", options: [
+                { text: "Enseñar a organizar tareas.", correct: true },
+                { text: "Dejar todo sin planificar.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la inclusión?", answer: "Promover la equidad laboral.", options: [
+                { text: "Promover la equidad laboral.", correct: true },
+                { text: "Ignorar la diversidad.", correct: false },
+                { text: "Un sistema de exclusión.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en análisis de datos?", answer: "Enseñar a interpretar información.", options: [
+                { text: "Enseñar a interpretar información.", correct: true },
+                { text: "Ignorar los datos disponibles.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la seguridad psicológica?", answer: "Crear un entorno de confianza.", options: [
+                { text: "Crear un entorno de confianza.", correct: true },
+                { text: "Ignorar el bienestar emocional.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en sostenibilidad?", answer: "Enseñar prácticas responsables.", options: [
+                { text: "Enseñar prácticas responsables.", correct: true },
+                { text: "Ignorar el impacto ambiental.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la adaptabilidad?", answer: "Facilitar ajustes al cambio.", options: [
+                { text: "Facilitar ajustes al cambio.", correct: true },
+                { text: "Mantenerse rígido siempre.", correct: false },
+                { text: "Un plan sin flexibilidad.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en empatía?", answer: "Enseñar a entender emociones.", options: [
+                { text: "Enseñar a entender emociones.", correct: true },
+                { text: "Ignorar los sentimientos.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la autonomía?", answer: "Dar libertad para decidir.", options: [
+                { text: "Dar libertad para decidir.", correct: true },
+                { text: "Controlar todas las decisiones.", correct: false },
+                { text: "Un sistema sin delegación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de equipos?", answer: "Enseñar a coordinar grupos.", options: [
+                { text: "Enseñar a coordinar grupos.", correct: true },
+                { text: "Trabajar de forma individual.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la creatividad?", answer: "Fomentar ideas innovadoras.", options: [
+                { text: "Fomentar ideas innovadoras.", correct: true },
+                { text: "Limitar el pensamiento creativo.", correct: false },
+                { text: "Un plan sin innovación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de riesgos?", answer: "Enseñar a prevenir problemas.", options: [
+                { text: "Enseñar a prevenir problemas.", correct: true },
+                { text: "Ignorar los riesgos.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la responsabilidad?", answer: "Promover el cumplimiento de deberes.", options: [
+                { text: "Promover el cumplimiento de deberes.", correct: true },
+                { text: "Ignorar las obligaciones.", correct: false },
+                { text: "Un sistema sin normas.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de proyectos?", answer: "Enseñar a planificar tareas.", options: [
+                { text: "Enseñar a planificar tareas.", correct: true },
+                { text: "Dejar todo sin planificar.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la confianza en equipo?", answer: "Fomentar relaciones sólidas.", options: [
+                { text: "Fomentar relaciones sólidas.", correct: true },
+                { text: "Ignorar la comunicación.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de calidad?", answer: "Enseñar a mantener estándares.", options: [
+                { text: "Enseñar a mantener estándares.", correct: true },
+                { text: "Ignorar los errores.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la comunicación interna?", answer: "Facilitar el flujo de información.", options: [
+                { text: "Facilitar el flujo de información.", correct: true },
+                { text: "Evitar la comunicación.", correct: false },
+                { text: "Un plan sin claridad.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en liderazgo ético?", answer: "Enseñar principios morales.", options: [
+                { text: "Enseñar principios morales.", correct: true },
+                { text: "Ignorar la ética.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la retroalimentación?", answer: "Proporcionar comentarios útiles.", options: [
+                { text: "Proporcionar comentarios útiles.", correct: true },
+                { text: "Evitar dar opiniones.", correct: false },
+                { text: "Un sistema sin comunicación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en seguridad digital?", answer: "Enseñar a proteger datos.", options: [
+                { text: "Enseñar a proteger datos.", correct: true },
+                { text: "Ignorar la ciberseguridad.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la satisfacción laboral?", answer: "Mejorar el bienestar del personal.", options: [
+                { text: "Mejorar el bienestar del personal.", correct: true },
+                { text: "Ignorar las necesidades del equipo.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de crisis?", answer: "Enseñar a manejar emergencias.", options: [
+                { text: "Enseñar a manejar emergencias.", correct: true },
+                { text: "Ignorar las emergencias.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la productividad?", answer: "Aumentar la eficiencia laboral.", options: [
+                { text: "Aumentar la eficiencia laboral.", correct: true },
+                { text: "Trabajar sin objetivos claros.", correct: false },
+                { text: "Ignorar los recursos.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en inteligencia emocional?", answer: "Enseñar a gestionar emociones.", options: [
+                { text: "Enseñar a gestionar emociones.", correct: true },
+                { text: "Ignorar los sentimientos.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la capacitación?", answer: "Organizar programas de formación.", options: [
+                { text: "Organizar programas de formación.", correct: true },
+                { text: "Evitar el aprendizaje.", correct: false },
+                { text: "Un plan sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en trabajo colaborativo?", answer: "Enseñar a trabajar en equipo.", options: [
+                { text: "Enseñar a trabajar en equipo.", correct: true },
+                { text: "Trabajar de forma individual.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la innovación organizacional?", answer: "Introducir mejoras estructurales.", options: [
+                { text: "Introducir mejoras estructurales.", correct: true },
+                { text: "Mantener todo sin cambios.", correct: false },
+                { text: "Un plan sin creatividad.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión del cambio?", answer: "Enseñar a adaptarse a nuevas situaciones.", options: [
+                { text: "Enseñar a adaptarse a nuevas situaciones.", correct: true },
+                { text: "Evitar los cambios.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la responsabilidad social?", answer: "Contribuir al bienestar social.", options: [
+                { text: "Contribuir al bienestar social.", correct: true },
+                { text: "Ignorar el impacto social.", correct: false },
+                { text: "Un sistema sin ética.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la diversidad?", answer: "Enseñar a valorar diferencias.", options: [
+                { text: "Enseñar a valorar diferencias.", correct: true },
+                { text: "Ignorar la diversidad.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la cohesión de equipo?", answer: "Fomentar la unión grupal.", options: [
+                { text: "Fomentar la unión grupal.", correct: true },
+                { text: "Evitar la colaboración.", correct: false },
+                { text: "Un sistema sin comunicación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión del estrés?", answer: "Enseñar a controlar la presión.", options: [
+                { text: "Enseñar a controlar la presión.", correct: true },
+                { text: "Ignorar el estrés.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la sostenibilidad laboral?", answer: "Proteger el bienestar a largo plazo.", options: [
+                { text: "Proteger el bienestar a largo plazo.", correct: true },
+                { text: "Ignorar el impacto a futuro.", correct: false },
+                { text: "Un plan sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la empatía?", answer: "Enseñar a comprender al equipo.", options: [
+                { text: "Enseñar a comprender al equipo.", correct: true },
+                { text: "Ignorar las emociones.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la confianza organizacional?", answer: "Crear un ambiente de seguridad.", options: [
+                { text: "Crear un ambiente de seguridad.", correct: true },
+                { text: "Ignorar la confianza.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la autonomía?", answer: "Enseñar a tomar decisiones propias.", options: [
+                { text: "Enseñar a tomar decisiones propias.", correct: true },
+                { text: "Controlar todas las decisiones.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la comunicación externa?", answer: "Facilitar relaciones con terceros.", options: [
+                { text: "Facilitar relaciones con terceros.", correct: true },
+                { text: "Evitar la comunicación.", correct: false },
+                { text: "Un plan sin claridad.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la creatividad?", answer: "Enseñar a generar ideas nuevas.", options: [
+                { text: "Enseñar a generar ideas nuevas.", correct: true },
+                { text: "Limitar la creatividad.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la calidad de vida laboral?", answer: "Mejorar el bienestar del personal.", options: [
+                { text: "Mejorar el bienestar del personal.", correct: true },
+                { text: "Ignorar las necesidades del equipo.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la innovación?", answer: "Enseñar a implementar mejoras.", options: [
+                { text: "Enseñar a implementar mejoras.", correct: true },
+                { text: "Evitar la innovación.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la seguridad en equipo?", answer: "Proteger al grupo de riesgos.", options: [
+                { text: "Proteger al grupo de riesgos.", correct: true },
+                { text: "Ignorar los protocolos.", correct: false },
+                { text: "Un plan sin prevención.", correct: false }
             ] }
         ];
 
@@ -206,6 +850,7 @@
             if (selectedOption.correct) {
                 trophies++;
                 trophyCountElement.textContent = trophies;
+                localStorage.setItem('trophies', trophies);
                 successSound.play().catch(() => {});
                 if (trophies % 10 === 0) {
                     trophyIcon.style.display = 'block';
