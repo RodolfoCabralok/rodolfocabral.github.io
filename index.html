@@ -64,6 +64,19 @@
         .progress-bar { width: 100%; background: #ddd; border-radius: 5px; height: 10px; margin-bottom: 10px; }
         .progress-fill { height: 100%; background: #3a5d7d; border-radius: 5px; transition: width 0.3s ease; }
         .trophy { display: none; font-size: 24px; color: gold; margin-top: 10px; }
+        #trophies {
+            color: #000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        #trophyGoal {
+            color: #000;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
         .button-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
         button { padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: transform 0.1s, box-shadow 0.3s; }
         button:hover { transform: scale(1.05); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); }
@@ -71,34 +84,35 @@
         #shuffleCards { background: #ff9500; color: #fff; font-size: 20px; }
         #modeSolo, #modeDuelo { background: #dc3545; color: #fff; }
         #timer { font-size: 16px; color: #dc3545; margin-top: 10px; display: none; }
-        #results { margin-top: 20px; width: 100%; height: 150px; font-family: 'Poppins', sans-serif; font-size: 14px; color: #3a5d7d; border-radius: 5px; padding: 5px; }
+        #results { margin-top: 20px; width: 100%; height: 150px; font-family: 'Poppins', sans-serif; font-size: 14px; color: #3a5d7d; border-radius: 5px; }
         footer { margin-top: 20px; color: #3a5d7d; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🏭 Fábrica de Conocimiento: Capacitación del Personal</h1>
-        <a href="https://drive.google.com/file/d/1BJ_ujQ1w3VTMbe_v4APPoY1RWxzeKrkY/view?usp=sharing" target="_blank" class="glossary-link" title="Consultar Glosario">
+        <a href="https://drive.google.com/file/d/1BJ_ujQ1w3VTMbe_v4aIjPoY1RWxzeKrkY/view?usp=sharing" target="_blank" class="glossary-link" title="Consultar">
             📖 <span class="glossary-label">Consultar Glosario</span>
         </a>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
         <div class="card" id="card">
-            <div class="card-text" id="question"></div>
+            <div class="card-text" id="cardText>
             <div class="options" id="options"></div>
             <div class="answer" id="answer"></div>
         </div>
-        <div id="trophies">Trofeos ganados: <span id="trophyCount">0</span></div>
+        <div id="trophies">Trofeos ganados: <span id="trophyCount">0</span> 💪</div>
+        <div id="trophyGoal">Consigue 10 trofeos 🏆</div>
         <div class="trophy" id="trophyIcon">🏆 ¡Meta alcanzada!</div>
         <div id="timer"></div>
         <div class="button-container">
-            <button id="nextCard">Siguiente</button>
-            <button id="prevCard">Anterior</button>
-            <button id="shuffleCards">↬ Barajar</button>
-            <button id="modeSolo">Modo Solo</button>
-            <button id="modeDuelo">Duelo (2 Jugadores)</button>
-            <button id="sendResults">Enviar Resultados al Docente</button>
+            <button type="button" id="nextCard">Siguiente</button>
+            <button type="button" id="prevCard">Anterior</button>
+            <button type="button" id="shuffleCards">↬ Barajar</button>
+            <button type="button" id="modeSolo">Modo Solo</button>
+            <button type="button" id="modeDuelo">Duelo (2 Jugadores)</button>
+            <button type="button" id="sendResults">Enviar Resultados al Docente</button>
         </div>
         <textarea id="results" readonly placeholder="Aquí aparecerán tus resultados para copiar y enviar al docente."></textarea>
         <footer>Creado por Prof. Rodolfo Cabral</footer>
