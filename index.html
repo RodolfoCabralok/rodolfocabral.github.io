@@ -973,6 +973,11 @@
             const cardCounterElement = document.getElementById('cardCounter');
             const resultsElement = document.getElementById('results');
 
+            if (!questionElement || !optionsElement || !nextCardButton) {
+                console.error('Algunos elementos del DOM no se encontraron.');
+                return;
+            }
+
             function shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -1005,6 +1010,7 @@
                 cardCounterElement.textContent = `Tarjeta ${currentCardIndex + 1} de ${total}`;
 
                 prevCardButton.disabled = currentCardIndex === 0;
+                nextCardButton.disabled = false;
                 if (currentCardIndex === total - 1) {
                     nextCardButton.textContent = 'Finalizar';
                 } else {
@@ -1069,7 +1075,8 @@
             }
 
             function nextCard() {
-                if (currentCardIndex < (mode === 'solo' ? flashcards.length : 10) - 1) {
+                const total = mode === 'solo' ? flashcards.length : 10;
+                if (currentCardIndex < total - 1) {
                     currentCardIndex++;
                     updateCard();
                 } else {
@@ -1125,3 +1132,21 @@
                     if (newValue !== this.value) {
                         this.value = newValue;
                     }
+                }
+                this.dataset.original = this.value;
+            });
+
+            // Asignar event listeners
+            nextCardButton.addEventListener('click', nextCard);
+            prevCardButton.addEventListener('click', prevCard);
+            shuffleButton.addEventListener('click', shuffleCards);
+            modeSoloButton.addEventListener('click', () => startMode('solo'));
+            modeDueloButton.addEventListener('click', () => startMode('duelo'));
+            sendResultsButton.addEventListener('click', sendResults);
+
+            // Inicializar la primera tarjeta
+            updateCard();
+        });
+    </script>
+</body>
+</html>
