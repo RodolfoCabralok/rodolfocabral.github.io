@@ -56,13 +56,14 @@
         @keyframes fadeIn { to { opacity: 1; } }
         .card-text { font-size: 18px; margin-bottom: 10px; }
         .options { margin-top: 10px; }
-        .option { padding: 10px; margin: 5px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
-        .option:hover { background: #0056b3; }
-        .option.correct { background: #28a745; }
-        .option.wrong { background: #dc3545; }
-        .answer { display: none; font-style: italic; color: #555; }
+        .option { padding: 10px; margin: 5px; background: #d3d3d3; color: #333; border: none; border-radius: 5px; cursor: pointer; }
+        .option:hover { background: #c0c0c0; }
+        .option.correct { background: #28a745; color: #fff; }
+        .option.wrong { background: #dc3545; color: #fff; }
+        .answer { display: none; font-style: italic; color: #000; margin-top: 10px; background: #ffd700; padding: 10px; border: 2px solid #3a5d7d; border-radius: 5px; font-size: 16px; font-weight: bold; }
         .progress-bar { width: 100%; background: #ddd; border-radius: 5px; height: 10px; margin-bottom: 10px; }
         .progress-fill { height: 100%; background: #3a5d7d; border-radius: 5px; transition: width 0.3s ease; }
+        .card-counter { font-size: 14px; color: #000; background: rgba(255, 255, 255, 0.8); padding: 5px 10px; border-radius: 5px; margin: 5px 0; }
         .trophy { display: none; font-size: 24px; color: gold; margin-top: 10px; }
         #trophies {
             color: #000;
@@ -80,6 +81,7 @@
         .button-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
         button { padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: transform 0.1s, box-shadow 0.3s; }
         button:hover { transform: scale(1.05); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); }
+        button:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.5; }
         #nextCard, #prevCard { background: #007bff; color: #fff; }
         #shuffleCards { background: #ff9500; color: #fff; font-size: 20px; }
         #modeSolo, #modeDuelo { background: #dc3545; color: #fff; }
@@ -97,6 +99,7 @@
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
+        <div class="card-counter" id="cardCounter"></div>
         <div class="card" id="card">
             <div class="card-text" id="question"></div>
             <div class="options" id="options"></div>
@@ -114,7 +117,7 @@
             <button id="modeDuelo">Duelo (2 Jugadores)</button>
             <button id="sendResults">Enviar Resultados al Docente</button>
         </div>
-        <textarea id="results" readonly placeholder="Aquí aparecerán tus resultados para copiar y enviar al docente."></textarea>
+        <textarea id="results" placeholder="Aquí aparecerán tus resultados. Solo puedes editar el nombre y apellido dentro de los corchetes [Nombre Apellido]."></textarea>
         <footer>Creado por Prof. Rodolfo Cabral</footer>
     </div>
     <script>
@@ -619,184 +622,340 @@
                 { text: "Ignorar los sentimientos.", correct: false },
                 { text: "Un curso sin objetivos claros.", correct: false }
             ] },
-            { question: "¿Qué es la gestión de la autonomía?", answer: "Dar libertad para decidir.", options: [
-                { text: "Dar libertad para decidir.", correct: true },
+            { question: "¿Qué es la gestión de la autonomía?", answer: "Promover la independencia laboral.", options: [
+                { text: "Promover la independencia laboral.", correct: true },
                 { text: "Controlar todas las decisiones.", correct: false },
                 { text: "Un sistema sin delegación.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en gestión de equipos?", answer: "Enseñar a coordinar grupos.", options: [
-                { text: "Enseñar a coordinar grupos.", correct: true },
+            { question: "¿Qué es la capacitación en liderazgo situacional?", answer: "Adaptar el estilo de dirección.", options: [
+                { text: "Adaptar el estilo de dirección.", correct: true },
+                { text: "Usar un solo enfoque siempre.", correct: false },
+                { text: "Ignorar las necesidades del equipo.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la satisfacción laboral?", answer: "Mejorar el bienestar del personal.", options: [
+                { text: "Mejorar el bienestar del personal.", correct: true },
+                { text: "Ignorar la felicidad laboral.", correct: false },
+                { text: "Un sistema de sanciones.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en coaching?", answer: "Enseñar a guiar al equipo.", options: [
+                { text: "Enseñar a guiar al equipo.", correct: true },
+                { text: "Evitar la orientación personal.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la innovación tecnológica?", answer: "Implementar avances tecnológicos.", options: [
+                { text: "Implementar avances tecnológicos.", correct: true },
+                { text: "Ignorar nuevas herramientas.", correct: false },
+                { text: "Un plan sin modernización.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de equipos?", answer: "Enseñar a liderar grupos.", options: [
+                { text: "Enseñar a liderar grupos.", correct: true },
+                { text: "Trabajar sin liderazgo.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la creatividad?", answer: "Fomentar ideas originales.", options: [
+                { text: "Fomentar ideas originales.", correct: true },
+                { text: "Limitar el pensamiento innovador.", correct: false },
+                { text: "Un sistema sin inspiración.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en seguridad vial laboral?", answer: "Enseñar normas de conducción segura.", options: [
+                { text: "Enseñar normas de conducción segura.", correct: true },
+                { text: "Ignorar las reglas de tránsito.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la equidad?", answer: "Promover la justicia laboral.", options: [
+                { text: "Promover la justicia laboral.", correct: true },
+                { text: "Ignorar las diferencias de trato.", correct: false },
+                { text: "Un sistema de favoritismo.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en manejo de crisis?", answer: "Enseñar a responder emergencias.", options: [
+                { text: "Enseñar a responder emergencias.", correct: true },
+                { text: "Ignorar las situaciones críticas.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la participación?", answer: "Involucrar al personal en decisiones.", options: [
+                { text: "Involucrar al personal en decisiones.", correct: true },
+                { text: "Excluir al equipo de la planificación.", correct: false },
+                { text: "Un sistema sin colaboración.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en desarrollo personal?", answer: "Fomentar el crecimiento individual.", options: [
+                { text: "Fomentar el crecimiento individual.", correct: true },
+                { text: "Ignorar el desarrollo personal.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la salud ocupacional?", answer: "Proteger la salud del trabajador.", options: [
+                { text: "Proteger la salud del trabajador.", correct: true },
+                { text: "Ignorar los riesgos de salud.", correct: false },
+                { text: "Un plan sin prevención.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en inteligencia artificial?", answer: "Enseñar uso de IA en el trabajo.", options: [
+                { text: "Enseñar uso de IA en el trabajo.", correct: true },
+                { text: "Ignorar las herramientas tecnológicas.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la responsabilidad social?", answer: "Promover el impacto positivo social.", options: [
+                { text: "Promover el impacto positivo social.", correct: true },
+                { text: "Ignorar la comunidad externa.", correct: false },
+                { text: "Un sistema sin ética.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en trabajo remoto?", answer: "Enseñar a trabajar desde casa.", options: [
+                { text: "Enseñar a trabajar desde casa.", correct: true },
+                { text: "Ignorar las necesidades remotas.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la satisfacción del cliente?", answer: "Mejorar la experiencia del cliente.", options: [
+                { text: "Mejorar la experiencia del cliente.", correct: true },
+                { text: "Ignorar las opiniones del cliente.", correct: false },
+                { text: "Un sistema sin atención.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en ciberseguridad?", answer: "Enseñar protección de datos.", options: [
+                { text: "Enseñar protección de datos.", correct: true },
+                { text: "Ignorar los riesgos digitales.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la reputación?", answer: "Cuidar la imagen de la empresa.", options: [
+                { text: "Cuidar la imagen de la empresa.", correct: true },
+                { text: "Ignorar la percepción pública.", correct: false },
+                { text: "Un plan sin estrategia.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de proyectos ágiles?", answer: "Enseñar metodologías ágiles.", options: [
+                { text: "Enseñar metodologías ágiles.", correct: true },
+                { text: "Ignorar la flexibilidad en proyectos.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la cultura de innovación?", answer: "Fomentar un entorno creativo.", options: [
+                { text: "Fomentar un entorno creativo.", correct: true },
+                { text: "Limitar las ideas nuevas.", correct: false },
+                { text: "Un sistema sin inspiración.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en desarrollo sostenible?", answer: "Enseñar prácticas ecológicas.", options: [
+                { text: "Enseñar prácticas ecológicas.", correct: true },
+                { text: "Ignorar el medio ambiente.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la digitalización?", answer: "Implementar procesos digitales.", options: [
+                { text: "Implementar procesos digitales.", correct: true },
+                { text: "Evitar la tecnología moderna.", correct: false },
+                { text: "Un plan sin modernización.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en liderazgo emocional?", answer: "Enseñar a liderar con empatía.", options: [
+                { text: "Enseñar a liderar con empatía.", correct: true },
+                { text: "Ignorar las emociones del equipo.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la diversidad cultural?", answer: "Incluir diferentes culturas.", options: [
+                { text: "Incluir diferentes culturas.", correct: true },
+                { text: "Ignorar las diferencias culturales.", correct: false },
+                { text: "Un sistema de exclusión.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión del cambio?", answer: "Enseñar a adaptarse a transformaciones.", options: [
+                { text: "Enseñar a adaptarse a transformaciones.", correct: true },
+                { text: "Resistirse a los cambios.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la seguridad informática?", answer: "Proteger datos y sistemas.", options: [
+                { text: "Proteger datos y sistemas.", correct: true },
+                { text: "Ignorar los riesgos digitales.", correct: false },
+                { text: "Un plan sin prevención.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en marketing digital?", answer: "Enseñar estrategias digitales.", options: [
+                { text: "Enseñar estrategias digitales.", correct: true },
+                { text: "Ignorar las herramientas online.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la experiencia del empleado?", answer: "Mejorar el entorno laboral.", options: [
+                { text: "Mejorar el entorno laboral.", correct: true },
+                { text: "Ignorar la satisfacción del personal.", correct: false },
+                { text: "Un sistema sin atención.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de riesgos laborales?", answer: "Enseñar a prevenir accidentes.", options: [
+                { text: "Enseñar a prevenir accidentes.", correct: true },
+                { text: "Ignorar los riesgos laborales.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la ética empresarial?", answer: "Promover principios morales.", options: [
+                { text: "Promover principios morales.", correct: true },
+                { text: "Ignorar la ética laboral.", correct: false },
+                { text: "Un sistema sin valores.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en desarrollo de equipos?", answer: "Fomentar la colaboración grupal.", options: [
+                { text: "Fomentar la colaboración grupal.", correct: true },
                 { text: "Trabajar de forma individual.", correct: false },
                 { text: "Un curso sin objetivos claros.", correct: false }
             ] },
-            { question: "¿Qué es la gestión de la creatividad?", answer: "Fomentar ideas innovadoras.", options: [
-                { text: "Fomentar ideas innovadoras.", correct: true },
-                { text: "Limitar el pensamiento creativo.", correct: false },
-                { text: "Un plan sin innovación.", correct: false }
+            { question: "¿Qué es la gestión de la productividad?", answer: "Optimizar el rendimiento laboral.", options: [
+                { text: "Optimizar el rendimiento laboral.", correct: true },
+                { text: "Ignorar la eficiencia.", correct: false },
+                { text: "Un plan sin metas.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en gestión de riesgos?", answer: "Enseñar a prevenir problemas.", options: [
-                { text: "Enseñar a prevenir problemas.", correct: true },
-                { text: "Ignorar los riesgos.", correct: false },
+            { question: "¿Qué es la capacitación en salud mental laboral?", answer: "Enseñar a cuidar el bienestar emocional.", options: [
+                { text: "Enseñar a cuidar el bienestar emocional.", correct: true },
+                { text: "Ignorar el estrés laboral.", correct: false },
                 { text: "Un curso sin objetivos claros.", correct: false }
             ] },
-            { question: "¿Qué es la gestión de la responsabilidad?", answer: "Promover el cumplimiento de deberes.", options: [
-                { text: "Promover el cumplimiento de deberes.", correct: true },
-                { text: "Ignorar las obligaciones.", correct: false },
-                { text: "Un sistema sin normas.", correct: false }
+            { question: "¿Qué es la gestión de la innovación social?", answer: "Fomentar soluciones sociales.", options: [
+                { text: "Fomentar soluciones sociales.", correct: true },
+                { text: "Ignorar las necesidades sociales.", correct: false },
+                { text: "Un plan sin impacto.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en gestión de proyectos?", answer: "Enseñar a planificar tareas.", options: [
-                { text: "Enseñar a planificar tareas.", correct: true },
-                { text: "Dejar todo sin planificar.", correct: false },
+            { question: "¿Qué es la capacitación en gestión financiera?", answer: "Enseñar a manejar presupuestos.", options: [
+                { text: "Enseñar a manejar presupuestos.", correct: true },
+                { text: "Ignorar las finanzas.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la calidad de vida laboral?", answer: "Mejorar el bienestar general.", options: [
+                { text: "Mejorar el bienestar general.", correct: true },
+                { text: "Ignorar la calidad de vida.", correct: false },
+                { text: "Un sistema sin enfoque.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en liderazgo estratégico?", answer: "Enseñar a planificar a largo plazo.", options: [
+                { text: "Enseñar a planificar a largo plazo.", correct: true },
+                { text: "Ignorar las estrategias.", correct: false },
                 { text: "Un curso sin objetivos claros.", correct: false }
             ] },
-            { question: "¿Qué es la gestión de la confianza en equipo?", answer: "Fomentar relaciones sólidas.", options: [
-                { text: "Fomentar relaciones sólidas.", correct: true },
-                { text: "Ignorar la comunicación.", correct: false },
-                { text: "Un sistema de sanciones.", correct: false }
+            { question: "¿Qué es la gestión de la transformación digital?", answer: "Adaptar procesos a la digitalización.", options: [
+                { text: "Adaptar procesos a la digitalización.", correct: true },
+                { text: "Resistirse a la tecnología.", correct: false },
+                { text: "Un plan sin modernización.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en gestión de calidad?", answer: "Enseñar a mantener estándares.", options: [
+            { question: "¿Qué es la capacitación en gestión de la diversidad?", answer: "Enseñar a incluir diferencias.", options: [
+                { text: "Enseñar a incluir diferencias.", correct: true },
+                { text: "Ignorar la diversidad.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la responsabilidad ambiental?", answer: "Proteger el entorno laboral.", options: [
+                { text: "Proteger el entorno laboral.", correct: true },
+                { text: "Ignorar el impacto ambiental.", correct: false },
+                { text: "Un sistema sin enfoque.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en trabajo colaborativo?", answer: "Enseñar a trabajar en equipo.", options: [
+                { text: "Enseñar a trabajar en equipo.", correct: true },
+                { text: "Ignorar la colaboración.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la innovación educativa?", answer: "Fomentar métodos de aprendizaje nuevos.", options: [
+                { text: "Fomentar métodos de aprendizaje nuevos.", correct: true },
+                { text: "Mantener métodos antiguos.", correct: false },
+                { text: "Un plan sin creatividad.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de estrés?", answer: "Enseñar a manejar presión.", options: [
+                { text: "Enseñar a manejar presión.", correct: true },
+                { text: "Ignorar el estrés.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la excelencia operativa?", answer: "Optimizar procesos laborales.", options: [
+                { text: "Optimizar procesos laborales.", correct: true },
+                { text: "Ignorar la eficiencia.", correct: false },
+                { text: "Un plan sin metas.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en desarrollo organizacional?", answer: "Enseñar a mejorar estructuras.", options: [
+                { text: "Enseñar a mejorar estructuras.", correct: true },
+                { text: "Ignorar los cambios organizativos.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la seguridad alimentaria?", answer: "Garantizar calidad en alimentos.", options: [
+                { text: "Garantizar calidad en alimentos.", correct: true },
+                { text: "Ignorar normas de seguridad.", correct: false },
+                { text: "Un plan sin prevención.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en liderazgo inclusivo?", answer: "Enseñar a liderar con equidad.", options: [
+                { text: "Enseñar a liderar con equidad.", correct: true },
+                { text: "Ignorar la diversidad.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la resiliencia organizacional?", answer: "Fomentar la recuperación empresarial.", options: [
+                { text: "Fomentar la recuperación empresarial.", correct: true },
+                { text: "Ignorar los desafíos.", correct: false },
+                { text: "Un sistema sin adaptación.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la calidad?", answer: "Enseñar a mantener estándares.", options: [
                 { text: "Enseñar a mantener estándares.", correct: true },
                 { text: "Ignorar los errores.", correct: false },
                 { text: "Un curso sin objetivos claros.", correct: false }
             ] },
-            { question: "¿Qué es la gestión de la comunicación interna?", answer: "Facilitar el flujo de información.", options: [
-                { text: "Facilitar el flujo de información.", correct: true },
-                { text: "Evitar la comunicación.", correct: false },
-                { text: "Un plan sin claridad.", correct: false }
+            { question: "¿Qué es la gestión de la sostenibilidad social?", answer: "Promover el bienestar social.", options: [
+                { text: "Promover el bienestar social.", correct: true },
+                { text: "Ignorar las necesidades comunitarias.", correct: false },
+                { text: "Un plan sin impacto.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en liderazgo ético?", answer: "Enseñar principios morales.", options: [
-                { text: "Enseñar principios morales.", correct: true },
-                { text: "Ignorar la ética.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la retroalimentación?", answer: "Proporcionar comentarios útiles.", options: [
-                { text: "Proporcionar comentarios útiles.", correct: true },
-                { text: "Evitar dar opiniones.", correct: false },
-                { text: "Un sistema sin comunicación.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en seguridad digital?", answer: "Enseñar a proteger datos.", options: [
-                { text: "Enseñar a proteger datos.", correct: true },
-                { text: "Ignorar la ciberseguridad.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la satisfacción laboral?", answer: "Mejorar el bienestar del personal.", options: [
-                { text: "Mejorar el bienestar del personal.", correct: true },
+            { question: "¿Qué es la capacitación en gestión de recursos humanos?", answer: "Enseñar a administrar personal.", options: [
+                { text: "Enseñar a administrar personal.", correct: true },
                 { text: "Ignorar las necesidades del equipo.", correct: false },
-                { text: "Un sistema de sanciones.", correct: false }
+                { text: "Un curso sin práctica.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en gestión de crisis?", answer: "Enseñar a manejar emergencias.", options: [
-                { text: "Enseñar a manejar emergencias.", correct: true },
-                { text: "Ignorar las emergencias.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la productividad?", answer: "Aumentar la eficiencia laboral.", options: [
-                { text: "Aumentar la eficiencia laboral.", correct: true },
-                { text: "Trabajar sin objetivos claros.", correct: false },
-                { text: "Ignorar los recursos.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en inteligencia emocional?", answer: "Enseñar a gestionar emociones.", options: [
-                { text: "Enseñar a gestionar emociones.", correct: true },
-                { text: "Ignorar los sentimientos.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la capacitación?", answer: "Organizar programas de formación.", options: [
-                { text: "Organizar programas de formación.", correct: true },
-                { text: "Evitar el aprendizaje.", correct: false },
-                { text: "Un plan sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en trabajo colaborativo?", answer: "Enseñar a trabajar en equipo.", options: [
-                { text: "Enseñar a trabajar en equipo.", correct: true },
-                { text: "Trabajar de forma individual.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la innovación organizacional?", answer: "Introducir mejoras estructurales.", options: [
-                { text: "Introducir mejoras estructurales.", correct: true },
-                { text: "Mantener todo sin cambios.", correct: false },
+            { question: "¿Qué es la gestión de la innovación en servicios?", answer: "Mejorar servicios con nuevas ideas.", options: [
+                { text: "Mejorar servicios con nuevas ideas.", correct: true },
+                { text: "Mantener servicios antiguos.", correct: false },
                 { text: "Un plan sin creatividad.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en gestión del cambio?", answer: "Enseñar a adaptarse a nuevas situaciones.", options: [
-                { text: "Enseñar a adaptarse a nuevas situaciones.", correct: true },
-                { text: "Evitar los cambios.", correct: false },
+            { question: "¿Qué es la capacitación en seguridad industrial?", answer: "Enseñar a prevenir riesgos.", options: [
+                { text: "Enseñar a prevenir riesgos.", correct: true },
+                { text: "Ignorar las normas de seguridad.", correct: false },
                 { text: "Un curso sin objetivos claros.", correct: false }
             ] },
-            { question: "¿Qué es la gestión de la responsabilidad social?", answer: "Contribuir al bienestar social.", options: [
-                { text: "Contribuir al bienestar social.", correct: true },
-                { text: "Ignorar el impacto social.", correct: false },
-                { text: "Un sistema sin ética.", correct: false }
+            { question: "¿Qué es la gestión de la competitividad?", answer: "Fomentar la ventaja en el mercado.", options: [
+                { text: "Fomentar la ventaja en el mercado.", correct: true },
+                { text: "Ignorar la competencia.", correct: false },
+                { text: "Un sistema sin estrategia.", correct: false }
             ] },
-            { question: "¿Qué es la capacitación en gestión de la diversidad?", answer: "Enseñar a valorar diferencias.", options: [
-                { text: "Enseñar a valorar diferencias.", correct: true },
-                { text: "Ignorar la diversidad.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
+            { question: "¿Qué es la capacitación en gestión de la innovación?", answer: "Enseñar a fomentar nuevas ideas.", options: [
+                { text: "Enseñar a fomentar nuevas ideas.", correct: true },
+                { text: "Ignorar la creatividad.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
             ] },
-            { question: "¿Qué es la gestión de la cohesión de equipo?", answer: "Fomentar la unión grupal.", options: [
-                { text: "Fomentar la unión grupal.", correct: true },
-                { text: "Evitar la colaboración.", correct: false },
-                { text: "Un sistema sin comunicación.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en gestión del estrés?", answer: "Enseñar a controlar la presión.", options: [
-                { text: "Enseñar a controlar la presión.", correct: true },
-                { text: "Ignorar el estrés.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la sostenibilidad laboral?", answer: "Proteger el bienestar a largo plazo.", options: [
-                { text: "Proteger el bienestar a largo plazo.", correct: true },
-                { text: "Ignorar el impacto a futuro.", correct: false },
-                { text: "Un plan sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en gestión de la empatía?", answer: "Enseñar a comprender al equipo.", options: [
-                { text: "Enseñar a comprender al equipo.", correct: true },
-                { text: "Ignorar las emociones.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la confianza organizacional?", answer: "Crear un ambiente de seguridad.", options: [
-                { text: "Crear un ambiente de seguridad.", correct: true },
-                { text: "Ignorar la confianza.", correct: false },
-                { text: "Un sistema de sanciones.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en gestión de la autonomía?", answer: "Enseñar a tomar decisiones propias.", options: [
-                { text: "Enseñar a tomar decisiones propias.", correct: true },
-                { text: "Controlar todas las decisiones.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la comunicación externa?", answer: "Facilitar relaciones con terceros.", options: [
-                { text: "Facilitar relaciones con terceros.", correct: true },
-                { text: "Evitar la comunicación.", correct: false },
-                { text: "Un plan sin claridad.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en gestión de la creatividad?", answer: "Enseñar a generar ideas nuevas.", options: [
-                { text: "Enseñar a generar ideas nuevas.", correct: true },
-                { text: "Limitar la creatividad.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la calidad de vida laboral?", answer: "Mejorar el bienestar del personal.", options: [
-                { text: "Mejorar el bienestar del personal.", correct: true },
-                { text: "Ignorar las necesidades del equipo.", correct: false },
-                { text: "Un sistema de sanciones.", correct: false }
-            ] },
-            { question: "¿Qué es la capacitación en gestión de la innovación?", answer: "Enseñar a implementar mejoras.", options: [
-                { text: "Enseñar a implementar mejoras.", correct: true },
-                { text: "Evitar la innovación.", correct: false },
-                { text: "Un curso sin objetivos claros.", correct: false }
-            ] },
-            { question: "¿Qué es la gestión de la seguridad en equipo?", answer: "Proteger al grupo de riesgos.", options: [
-                { text: "Proteger al grupo de riesgos.", correct: true },
-                { text: "Ignorar los protocolos.", correct: false },
+            { question: "¿Qué es la gestión de la seguridad en el trabajo?", answer: "Proteger al personal de peligros.", options: [
+                { text: "Proteger al personal de peligros.", correct: true },
+                { text: "Ignorar los riesgos laborales.", correct: false },
                 { text: "Un plan sin prevención.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en desarrollo de liderazgo?", answer: "Enseñar a liderar equipos.", options: [
+                { text: "Enseñar a liderar equipos.", correct: true },
+                { text: "Ignorar las habilidades de dirección.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la sostenibilidad económica?", answer: "Garantizar estabilidad financiera.", options: [
+                { text: "Garantizar estabilidad financiera.", correct: true },
+                { text: "Ignorar las finanzas.", correct: false },
+                { text: "Un plan sin enfoque.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la salud?", answer: "Enseñar a promover bienestar.", options: [
+                { text: "Enseñar a promover bienestar.", correct: true },
+                { text: "Ignorar la salud laboral.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la excelencia en el servicio?", answer: "Mejorar la atención al cliente.", options: [
+                { text: "Mejorar la atención al cliente.", correct: true },
+                { text: "Ignorar las necesidades del cliente.", correct: false },
+                { text: "Un sistema sin estándares.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión ambiental?", answer: "Enseñar a proteger el entorno.", options: [
+                { text: "Enseñar a proteger el entorno.", correct: true },
+                { text: "Ignorar el impacto ambiental.", correct: false },
+                { text: "Un curso sin objetivos claros.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la seguridad del paciente?", answer: "Proteger la salud de los pacientes.", options: [
+                { text: "Proteger la salud de los pacientes.", correct: true },
+                { text: "Ignorar los riesgos médicos.", correct: false },
+                { text: "Un plan sin prevención.", correct: false }
+            ] },
+            { question: "¿Qué es la capacitación en gestión de la seguridad vial?", answer: "Enseñar normas de tránsito laboral.", options: [
+                { text: "Enseñar normas de tránsito laboral.", correct: true },
+                { text: "Ignorar las reglas de conducción.", correct: false },
+                { text: "Un curso sin práctica.", correct: false }
+            ] },
+            { question: "¿Qué es la gestión de la seguridad alimentaria laboral?", answer: "Garantizar calidad en alimentos laborales.", options: [
+                { text: "Garantizar calidad en alimentos laborales.", correct: true },
+                { text: "Ignorar las normas de seguridad.", correct: false },
+                { text: "Un plan sin enfoque.", correct: false }
             ] }
         ];
 
+        let shuffledCards = [...flashcards];
         let currentCardIndex = 0;
-        let trophies = parseInt(localStorage.getItem('trophies')) || 0;
-        let currentMode = 'solo';
-        let timeLeft = 30;
-        let timerInterval;
-        let cardsCompleted = 0;
-        let totalTime = 0;
-        let startTime;
-        let playerName = '';
-        let opponentTrophies = 0;
-        let maxCards = 10;
+        let trophies = 0;
+        let mode = 'solo';
+        let playerName = 'Operario Anónimo';
+        let totalCards = 0;
+        let completedCards = 0;
 
         const questionElement = document.getElementById('question');
         const optionsElement = document.getElementById('options');
@@ -807,72 +966,111 @@
         const modeSoloButton = document.getElementById('modeSolo');
         const modeDueloButton = document.getElementById('modeDuelo');
         const sendResultsButton = document.getElementById('sendResults');
-        const progressFill = document.getElementById('progressFill');
         const trophyCountElement = document.getElementById('trophyCount');
-        const trophyIcon = document.getElementById('trophyIcon');
-        const timerElement = document.getElementById('timer');
+        const trophyIconElement = document.getElementById('trophyIcon');
+        const progressFillElement = document.getElementById('progressFill');
+        const cardCounterElement = document.getElementById('cardCounter');
         const resultsElement = document.getElementById('results');
-        const successSound = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-        const milestoneSound = new Audio('https://www.soundjay.com/mechanical/click-01.mp3');
 
-        function shuffleOptions(options) {
-            for (let i = options.length - 1; i > 0; i--) {
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [options[i], options[j]] = [options[j], options[i]];
+                [array[i], array[j]] = [array[j], array[i]];
             }
-            return options;
+            return array;
         }
 
         function updateCard() {
-            const card = flashcards[currentCardIndex];
+            const card = shuffledCards[currentCardIndex];
             questionElement.textContent = card.question;
-            answerElement.style.display = 'none';
             optionsElement.innerHTML = '';
-            const shuffledOptions = shuffleOptions([...card.options]);
-            shuffledOptions.forEach((option, index) => {
+            answerElement.style.display = 'none';
+
+            card.options.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option.text;
                 button.className = 'option';
-                button.onclick = () => checkAnswer(index, shuffledOptions);
+                button.addEventListener('click', () => checkAnswer(option, card));
                 optionsElement.appendChild(button);
             });
-            updateProgress();
+
+            const total = mode === 'solo' ? flashcards.length : 10;
+            const progress = ((currentCardIndex + 1) / total) * 100;
+            progressFillElement.style.width = `${progress}%`;
+            cardCounterElement.textContent = `Tarjeta ${currentCardIndex + 1} de ${total}`;
+
+            prevCardButton.disabled = currentCardIndex === 0;
+            if (currentCardIndex === total - 1) {
+                nextCardButton.textContent = 'Finalizar';
+            } else {
+                nextCardButton.textContent = 'Siguiente';
+            }
         }
 
-        function checkAnswer(index, shuffledOptions) {
-            const selectedOption = shuffledOptions[index];
-            const buttons = optionsElement.getElementsByTagName('button');
-            for (let i = 0; i < buttons.length; i++) {
-                buttons[i].disabled = true;
-                if (shuffledOptions[i].correct) buttons[i].classList.add('correct');
-                else buttons[i].classList.add('wrong');
-            }
-            if (selectedOption.correct) {
-                trophies++;
-                trophyCountElement.textContent = trophies;
-                localStorage.setItem('trophies', trophies);
-                successSound.play().catch(() => {});
-                if (trophies % 10 === 0) {
-                    trophyIcon.style.display = 'block';
-                    milestoneSound.play().catch(() => {});
-                    setTimeout(() => trophyIcon.style.display = 'none', 2000);
+        function checkAnswer(selectedOption, card) {
+            const options = optionsElement.getElementsByClassName('option');
+            for (let option of options) {
+                option.disabled = true;
+                const text = option.textContent;
+                const isCorrect = card.options.find(o => o.text === text).correct;
+                if (isCorrect) {
+                    option.classList.add('correct');
+                    if (selectedOption.correct) {
+                        playSuccessSound();
+                        trophies++;
+                        trophyCountElement.textContent = trophies;
+                        if (trophies % 10 === 0 && trophies > 0) {
+                            playMilestoneSound();
+                            trophyIconElement.style.display = 'block';
+                            setTimeout(() => { trophyIconElement.style.display = 'none'; }, 2000);
+                        }
+                    }
+                } else if (text === selectedOption.text) {
+                    option.classList.add('wrong');
                 }
             }
+            answerElement.textContent = `Respuesta correcta: ${card.answer}`;
+            answerElement.style.display = 'block';
+            completedCards++;
+            saveResults();
         }
 
-        function updateProgress() {
-            const total = currentMode === 'solo' ? flashcards.length : maxCards;
-            const progress = ((currentCardIndex + 1) / total) * 100;
-            progressFill.style.width = `${progress}%`;
+        function playSuccessSound() {
+            const audio = new Audio('https://www.soundjay.com/mechanical/chain-pull-01.mp3');
+            audio.play().catch(error => console.log('Error al reproducir sonido:', error));
+        }
+
+        function playMilestoneSound() {
+            const audio = new Audio('https://www.soundjay.com/mechanical/hammer-01.mp3');
+            audio.play().catch(error => console.log('Error al reproducir sonido:', error));
+        }
+
+        function startMode(selectedMode) {
+            mode = selectedMode;
+            trophies = 0;
+            trophyCountElement.textContent = trophies;
+            trophyIconElement.style.display = 'none';
+            totalCards = mode === 'solo' ? flashcards.length : 10;
+            completedCards = 0;
+            shuffledCards = mode === 'solo' ? [...flashcards] : shuffleArray([...flashcards]).slice(0, 10);
+            currentCardIndex = 0;
+            if (mode === 'solo') {
+                const name = prompt('Por favor, ingresa tu nombre y apellido:');
+                playerName = name ? name : 'Operario Anónimo';
+            } else {
+                playerName = 'Jugador 1 vs Jugador 2';
+            }
+            updateCard();
         }
 
         function nextCard() {
-            if (currentMode === 'solo' || (currentMode === 'duelo' && currentCardIndex < maxCards - 1)) {
-                currentCardIndex = (currentCardIndex + 1) % (currentMode === 'solo' ? flashcards.length : maxCards);
+            if (currentCardIndex < (mode === 'solo' ? flashcards.length : 10) - 1) {
+                currentCardIndex++;
                 updateCard();
-                if (currentMode === 'duelo') timeLeft = 30;
-            } else if (currentMode === 'duelo') {
-                checkGameEnd();
+            } else {
+                alert('¡Has completado todas las tarjetas!');
+                currentCardIndex = 0;
+                updateCard();
             }
         }
 
@@ -880,80 +1078,53 @@
             if (currentCardIndex > 0) {
                 currentCardIndex--;
                 updateCard();
-                if (currentMode === 'duelo') timeLeft = 30;
             }
         }
 
         function shuffleCards() {
-            for (let i = flashcards.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
-            }
+            shuffledCards = mode === 'solo' ? shuffleArray([...flashcards]) : shuffleArray([...flashcards]).slice(0, 10);
             currentCardIndex = 0;
             updateCard();
         }
 
-        function startMode(mode) {
-            currentMode = mode;
-            cardsCompleted = 0;
-            totalTime = 0;
-            timeLeft = 30;
-            currentCardIndex = 0;
-            clearInterval(timerInterval);
-            timerElement.style.display = mode === 'solo' ? 'none' : 'block';
-            if (mode === 'duelo') {
-                playerName = prompt('Ingresa tu nombre:') || 'Operario Anónimo';
-                opponentTrophies = parseInt(localStorage.getItem('opponentTrophies')) || 0;
-                localStorage.setItem('opponentTrophies', trophies);
-                startTime = new Date();
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    timerElement.textContent = `Tiempo restante: ${timeLeft}s`;
-                    if (timeLeft <= 0) {
-                        nextCard();
-                        timeLeft = 30;
-                    }
-                }, 1000);
-                setTimeout(checkGameEnd, 300000);
-            }
-            updateModeButtons();
-            updateCard();
-        }
-
-        function updateModeButtons() {
-            modeSoloButton.style.background = currentMode === 'solo' ? '#6c757d' : '#dc3545';
-            modeDueloButton.style.background = currentMode === 'duelo' ? '#6c757d' : '#dc3545';
-        }
-
-        function checkGameEnd() {
-            if (currentMode !== 'duelo') return;
-            clearInterval(timerInterval);
-            timerElement.style.display = 'none';
-            let result = `Fin del Duelo\n`;
-            result += `Tú (${playerName}): ${trophies} trofeos\nOponente: ${opponentTrophies} trofeos\n`;
-            result += trophies > opponentTrophies ? '¡Ganaste!' : trophies < opponentTrophies ? 'Perdiste.' : 'Empate.';
-            alert(result);
-            currentMode = 'solo';
-            updateModeButtons();
+        function saveResults() {
+            const total = mode === 'solo' ? flashcards.length : 10;
+            const percentage = ((completedCards / total) * 100).toFixed(2);
+            const results = `Resultados de [${playerName}] - Fecha: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}\nTrofeos ganados: ${trophies}\nTarjetas completadas: ${completedCards} de ${total} (${percentage}%)\n*Nota: Los trofeos se reinician al cambiar de modo o recargar la página.*`;
+            resultsElement.value = results;
         }
 
         function sendResults() {
-            const now = new Date();
-            const averageTime = cardsCompleted ? (totalTime / cardsCompleted).toFixed(1) : 0;
-            let message = `Asunto: Resultados de Capacitación del Personal - ${playerName || 'Operario Anónimo'}\n\n`;
-            message += `Estimado Prof. Rodolfo Cabral,\n\n`;
-            message += `Soy ${playerName || 'Operario Anónimo'}. He completado un desafío en "Tarjetas de estudio. Capacitación del Personal" el ${now.toLocaleDateString()} a las ${now.toLocaleTimeString()}.\n\n`;
-            message += `Detalles:\n`;
-            message += `- Modo: ${currentMode === 'solo' ? 'Solo' : 'Duelo'}\n`;
-            if (currentMode === 'duelo') message += `- Trofeos del oponente: ${opponentTrophies}\n`;
-            message += `- Trofeos ganados: ${trophies}\n`;
-            message += `- Tarjetas completadas: ${cardsCompleted}/${currentMode === 'solo' ? flashcards.length : maxCards}\n`;
-            message += `- Tiempo promedio por tarjeta: ${averageTime} segundos\n\n`;
-            message += `¡Espero seguir mejorando!\n\nSaludos,\n${playerName || 'Operario Anónimo'}`;
-            resultsElement.value = message;
-            alert('El informe está listo en el área de texto. Selecciona el texto (mantén presionado o usa Ctrl+A), cópialo (Ctrl+C o clic derecho > Copiar), y pégalo en un correo o Classroom para el Prof. Rodolfo.');
+            const subject = `Resultados de Capacitación - [${playerName}]`;
+            const body = encodeURIComponent(resultsElement.value);
+            window.location.href = `mailto:profesor@example.com?subject=${subject}&body=${body}`;
         }
 
+        // Reiniciar trofeos al salir o recargar
+        window.addEventListener('beforeunload', () => {
+            trophies = 0;
+        });
+        window.addEventListener('load', () => {
+            trophies = 0;
+            startMode('solo');
+        });
+
+        // Restringir edición solo a nombre y apellido en resultados
+        resultsElement.addEventListener('input', function(e) {
+            const original = this.dataset.original || this.value;
+            const pattern = /\[(.*?)\]/;
+            const match = original.match(pattern);
+            if (match) {
+                const [fullMatch, name] = match;
+                const newValue = this.value.replace(/\[.*?\]/, `[${name}]`);
+                if (newValue !== this.value) {
+                    this.value = newValue;
+                }
+            }
+            this.dataset.original = this.value;
+        });
+
+        // Event listeners
         nextCardButton.addEventListener('click', nextCard);
         prevCardButton.addEventListener('click', prevCard);
         shuffleButton.addEventListener('click', shuffleCards);
@@ -961,8 +1132,6 @@
         modeDueloButton.addEventListener('click', () => startMode('duelo'));
         sendResultsButton.addEventListener('click', sendResults);
 
-        trophyCountElement.textContent = trophies;
+        // Inicializar
         updateCard();
-    </script>
-</body>
-</html>
+    </
